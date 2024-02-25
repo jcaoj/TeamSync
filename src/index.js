@@ -5,12 +5,14 @@ import App from './App';
 import Layout from './Layout';
 import reportWebVitals from './reportWebVitals';
 import { FluentProvider, teamsLightTheme } from '@fluentui/react-components';
+import { ContextProvider } from './Context';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <FluentProvider theme={teamsLightTheme}>
-    <Layout />
-    <App />
+    <ContextProvider>
+      <App />
+    </ContextProvider>
   </FluentProvider>,
 );
 

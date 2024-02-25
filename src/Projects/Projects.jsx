@@ -1,5 +1,6 @@
 import React from "react";
 import { useState, useContext, useEffect } from "react";
+import { Context } from "../Context";
 import "./Projects.css";
 import ProjectCard from "./ProjectCard";
 import ViewCreateProjects from "./ViewCreateProject";
@@ -15,9 +16,9 @@ import { Button, Text, Title2,
 
 import { AddSquare16Regular } from "@fluentui/react-icons";
 
-
-
 export default function Projects() {
+  const { currentPage, setCurrentPage } = useContext(Context);
+
   const [viewProject, setViewProject] = useState(false);
   const [selectedProject, setSelectedProject] = useState();
   const [projects, setProjects] = useState([ {
@@ -43,8 +44,9 @@ export default function Projects() {
 
   useEffect(() => {
     console.log("use effect mounted")
-    fetch('/getProjects')
-    .then(res => console.log(res));
+    // fetch('/getProjects')
+    // .then(res => console.log(res));
+    setCurrentPage("projects")
   }, []);
 
   return (

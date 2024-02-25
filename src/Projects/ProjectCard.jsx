@@ -27,8 +27,6 @@ const useStyles = makeStyles({
     }
 });
   
-
-
 export default function ProjectCard(props) {
     const styles = useStyles();
     const [project, setProject] = useState(props.project)

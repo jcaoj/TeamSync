@@ -9,6 +9,9 @@ import {
     Divider
 } from "@fluentui/react-components";
 import Logo from "./logo2.png";
+import { Outlet, useNavigate } from 'react-router-dom'
+import { useContext, useRef } from "react";
+import { Context } from "./Context";
 
 const useStyles = makeStyles({
     root: {
@@ -30,6 +33,14 @@ const useStyles = makeStyles({
 
 export default function Layout() {
     const styles = useStyles()
+    const { currentPage, setCurrentPage } = useContext(Context);
+    const navigate = useNavigate();
+
+    const NavToPage = (event, data) => {
+        setCurrentPage(data.value);
+        navigate("/" + data.value);
+    }
+
 
     return (
         <>
@@ -43,13 +54,14 @@ export default function Layout() {
                     />
                     <Subtitle1>TeamSync</Subtitle1>
                 </div>
-                <TabList>
+                <TabList selectedValue={currentPage} onTabSelect={NavToPage}>
                     <Tab value="projects">Projects</Tab>
                     <Tab value="teams">Teams</Tab>
                     <Tab value="settings">Settings</Tab>
                 </TabList>
             </div>
             <Divider />
+            <Outlet/>
         </>
     );
 }
