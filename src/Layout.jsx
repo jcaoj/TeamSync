@@ -58,6 +58,7 @@ export default function Layout() {
                     <Tab value="projects">Projects</Tab>
                     <Tab value="teams">Teams</Tab>
                     <Tab value="settings">Settings</Tab>
+                    <Tab value="posts">Posts</Tab>
                 </TabList>
             </div>
             <Divider />
