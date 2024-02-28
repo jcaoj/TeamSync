@@ -2,6 +2,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Projects from './Projects/Projects';
 import Teams from './Teams/Teams';
+import Posts from './Projects/CreatePost';
 import './App.css';
 import Layout from './Layout';
 
@@ -14,6 +15,7 @@ function App() {
           <Route index element={<Projects />} />
           <Route path="projects" element={<Projects />} />
           <Route path="teams" element={<Teams />} />
+          <Route path="posts" element={<Posts />} />
           <Route path="*" element={<Projects />} />
         </Route>
       </Routes>
