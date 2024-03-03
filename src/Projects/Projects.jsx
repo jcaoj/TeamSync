@@ -4,7 +4,6 @@ import { Context } from "../Context";
 import "./Projects.css";
 import ProjectCard from "./ProjectCard";
 import ViewCreateProjects from "./ViewCreateProject";
-
 import { Button, Text, Title2, 
   Menu,
   MenuButton,
@@ -13,8 +12,8 @@ import { Button, Text, Title2,
   MenuPopover,
   MenuTrigger,
  } from '@fluentui/react-components';
-
 import { AddSquare16Regular } from "@fluentui/react-icons";
+import CreateProjectModel from "./CreateProjectModel";
 
 export default function Projects() {
   const { currentPage, setCurrentPage } = useContext(Context);
@@ -22,14 +21,16 @@ export default function Projects() {
   const [viewProject, setViewProject] = useState(false);
   const [selectedProject, setSelectedProject] = useState();
   const [projects, setProjects] = useState([ {
-    key:1234, name:"Project 1", description:"this is project 1", team: "Team ABC"}]);
+    id:3, name:"Project 1", description:"this is project 1", team: "Team ABC"}]);
   const [teamProjects, setTeamProjects] = useState([
-    { key:1234, name:"Project 1", description:"this is project 1", team: "Team ABC"},  
-    { key:1234, name:"Project 1", description:"this is project 1", team: "Team ABC"},  
+    { id:1, name:"Project 1", description:"this is project 1", team: "Team ABC"},  
+    { id:12, name:"Project 1", description:"this is project 1", team: "Team ABC"},  
   ]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  function createProject() {
-    setViewProject(true)
+  function createProject(project) {
+    setProjects([...projects, project]); 
+    setIsModalOpen(false);
   }
 
   function onReturnToProjects() {
@@ -65,10 +66,9 @@ export default function Projects() {
             <MenuTrigger disableButtonEnhancement>
               <MenuButton menuIcon={<AddSquare16Regular/>}appearance="primary">Create</MenuButton>
             </MenuTrigger>
-
             <MenuPopover>
               <MenuList>
-                <MenuItem onClick={createProject}>Project</MenuItem>
+                <MenuItem onClick={() => setIsModalOpen(true)}>Project</MenuItem>
                 <MenuItem>Update</MenuItem>
               </MenuList>
             </MenuPopover>
@@ -83,6 +83,7 @@ export default function Projects() {
           <ViewCreateProjects onReturnToProjects={onReturnToProjects} project={selectedProject ? selectedProject : null}></ViewCreateProjects>
         </>
     )}
+    {isModalOpen && <CreateProjectModel onCreate={createProject} onClose={() => setIsModalOpen(false)} />}
     </>
   );
 }
@@ -98,7 +99,7 @@ function ProjectsList(props) {
         props.list.length > 0 ? ( 
           <div className="grid">
             {props.list.map(project => (
-                      <ProjectCard onProjectSelected={props.onProjectSelected} project={project}></ProjectCard>))}
+                      <ProjectCard key={project.id} onProjectSelected={props.onProjectSelected} project={project}></ProjectCard>))}
           </div>
         ) : (
         <div>
