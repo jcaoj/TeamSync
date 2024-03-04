@@ -18,7 +18,7 @@ import { Context } from "../Context";
 import axios from 'axios';
 
 export default function Projects() {
-  const {statuses, setStatuses, teams, setTeams} = useContext(Context);
+  const {currentPage, setCurrentPage, statuses, setStatuses, teams, setTeams} = useContext(Context);
   const [viewProject, setViewProject] = useState(false);
   const [selectedProject, setSelectedProject] = useState();
   const [projects, setProjects] = useState([]);
@@ -68,6 +68,7 @@ export default function Projects() {
   }
   
   useEffect(() => {
+      setCurrentPage("projects")
       axios.get("http://localhost:8081/getProjects")
       .then(res => {
         setProjects(res.data)
