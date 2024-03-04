@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, makeStyles, Textarea, Title2, Title3 } from '@fluentui/react-components';
+import { Button, makeStyles, Textarea, Title2, Label, Text } from '@fluentui/react-components';
 
 const useStyles = makeStyles({
   modal: {
@@ -49,7 +49,9 @@ export default function CreateTeamModal({ onCreate, onClose }) {
     <div className={styles.modal}>
       <Title2 className={styles.title}>Create a New Team</Title2>
       <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-        <Title3>Team Name</Title3>
+        <Label htmlFor="teamName" size="large">
+                  Team Name
+        </Label>
         <Textarea
           className={styles.input}
           placeholder="Enter team name"
@@ -57,7 +59,9 @@ export default function CreateTeamModal({ onCreate, onClose }) {
           onChange={(e) => setTeamName(e.target.value)}
           required
         />
-        <Title3>Description</Title3>
+        <Label htmlFor="description" size="large">
+                  Description
+        </Label>
         <Textarea
           className={styles.input}
           placeholder="Describe the team"
