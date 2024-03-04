@@ -4,6 +4,7 @@ import cors from 'cors'
 import multer from 'multer'
 import path from 'path'
 
+//#region Setup
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -22,20 +23,29 @@ const upload = multer({
 })
 
 const db = mysql.createConnection({
-    host: "127.0.0.1",
-    user: "root",
-    password: "1234",
+    host: "teamsync-teamsync.a.aivencloud.com",
+    port: "24720",
+    user: "ts",
+    password: "AVNS__xz8nfEvduI63chSR_L",
     database: "teamsync"
 })
+//#endregion
 
-app.post('/upload', upload.single('image'), (req, res) => {
-    console.log(req.file);
-    const image = req.file.filename;
-    const sql = "INSERT INTO `posts`(`projectId`, `title`, `caption`, `created`) VALUES (1, ?, ?, ?)";
+//#region Posts
+app.post('/uploadPost', upload.array('image'), (req, res) => {
+    console.log(req.files);
+    const postSql = "INSERT INTO `posts`(`projectId`, `title`, `caption`, `created`) VALUES (1, ?, ?, ?)";
+    const imageSql = "INSERT INTO `imagesInPost`(`postId`, `image`) VALUES (?, ?)";
 
-    db.query(sql, ["testPost", "testCaption", new Date()], (err, result) => {
+    db.query(postSql, ["testPost", "testCaption", new Date()], (err, result) => {
         if(err) return res.json({Message: err});
 
+        // Upload images using postId from first query
+        for(let i = 0; i < req.files.length; i++) {
+            db.query(imageSql, [result.insertId, req.files[i].filename], (err, result) => {
+                if (err) console.log(err);
+            })
+        }
         return res.json({Status: result});
     })
 })
@@ -47,7 +57,46 @@ app.get('/getPosts', (req, res) => {
         return res.json(result);
     })
 })
+//#endregion
 
+//#region Projects
+app.post('/uploadProject', (req, res) => {
+    const sql = "INSERT INTO `projects`(`teamId`, `name`, `description`, `status`, `created`, `createdBy`) VALUES (?, ?, ?, ?, ?, ?)";
+    db.query(sql, [req.query.teamId, req.query.name, req.query.description, req.query.status, new Date(), "jess"], (err, result) => {
+        if(err) return res.json({Message: err});
+        return res.json({Status: result});
+    })
+
+})
+
+app.get('/getProjects', (req, res) => {
+    const sql = "select * from projects";
+    db.query(sql, (err, result) => {
+        if(err) return res.json({Message: err});
+        return res.json(result);
+    })
+})
+//#endregion
+
+//#region Teams
+app.get('/getTeams', (req, res) => {
+    const sql = "select * from teams";
+    db.query(sql, (err, result) => {
+        if(err) return res.json({Message: err});
+        return res.json(result);
+    })
+})
+
+app.get('/getTeamById', (req, res) => {
+    const sql = "select * from teams where id=?";
+    db.query(sql, [req.query.teamId], (err, result) => {
+        if(err) return res.json({Message: err});
+        return res.json(result);
+    })
+})
+//#endregion
+
+//#region Statuses
 app.get('/getStatuses', (req, res) => {
     const sql = "select * from statuses";
     db.query(sql, (err, result) => {
@@ -55,6 +104,7 @@ app.get('/getStatuses', (req, res) => {
         return res.json(result);
     })
 })
+//#endregion
 
 app.listen(8081, () => {console.log("Running")})
 

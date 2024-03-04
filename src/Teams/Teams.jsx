@@ -6,13 +6,11 @@ import { Button } from '@fluentui/react-components';
 import { AddSquare16Regular } from "@fluentui/react-icons";
 
 export default function Teams() {
-  const { currentPage, setCurrentPage } = useContext(Context);
   const [teams, setTeams] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     console.log("use effect mounted teams")
-    setCurrentPage("teams")
     setTeams([{id: Date.now(), name: "Team 1", description: "blah blah blah"}, {id: Date.now(), name: "Team 2", description: "blah blah blah"}])
   }, []);
 

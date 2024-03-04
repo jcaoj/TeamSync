@@ -1,30 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import "./Projects.css";
 import "../Modal.css";
 import { Button, Textarea, Title2, Input, Label, Dropdown, Option } from '@fluentui/react-components';
-
+import { Context } from "../Context";
 const options = [
-    "Cat",
-    "Caterpillar",
-    "Corgi",
-    "Chupacabra",
-    "Dog",
-    "Ferret",
-    "Fish",
-    "Fox",
-    "Hamster",
-    "Snake",
+    [1, "Cat"],
+    [2, "Caterpillar"],
+    [3, "Corgi"]
   ];
-
-export default function CreateProjectModel({ onCreate, onClose }) {
+export default function CreateProjectModal({ onCreate, onClose}) {
     const [projectName, setProjectName] = useState('');
     const [description, setDescription] = useState('');
     const [selectedTeam, setSelectedTeam] = useState('');
+    const [status, setStatus] = useState('');
+
+    const [teamsArray, setTeamsArray] = useState([]);
+    const {statuses, setStatuses, teams, setTeams} = useContext(Context);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onCreate({ id: Date.now(), name: projectName, description: description, team: selectedTeam });
+        onCreate({ name: projectName, description: description, teamId: selectedTeam, status: status});
     };
+
+    useEffect(()=> {
+        var formatted = [];
+        Object.keys(teams).forEach(function(key) {
+            formatted.push([teams[key].id, teams[key].name]);
+            });
+        setTeamsArray(formatted);
+    }, [])
 
     return (
         <div className="modal">
@@ -50,9 +54,23 @@ export default function CreateProjectModel({ onCreate, onClose }) {
                     placeholder="Select a team"
                     className="input"
                     onOptionSelect={(e, data) => setSelectedTeam(data.optionValue)}>
-                    {options.map((option) => (
-                        <Option key={option} >
-                            {option}
+                    {teamsArray.map((option) => (
+                        <Option key={option} value={option[0]}>
+                            {option[1]}
+                        </Option>
+                    ))}
+                </Dropdown>
+                <Label htmlFor="status" size="large">
+                    Status
+                </Label>
+                <Dropdown
+                    aria-labelledby="status"
+                    placeholder="Select a status"
+                    className="input"
+                    onOptionSelect={(e, data) => setStatus(data.optionValue)}>
+                    {statuses.map((status) => (
+                        <Option key={status[0]} text={status[1]} value={status[0]} >
+                            {status[1]}
                         </Option>
                     ))}
                 </Dropdown>
