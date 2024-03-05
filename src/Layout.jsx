@@ -20,6 +20,10 @@ const useStyles = makeStyles({
         alignItems: "flex-end",
         display: "flex",
         flexDirection: "row",
+        position: "sticky",
+        top: "0",
+        zIndex: "5000",
+        backgroundColor: "inherit",
         justifyContent: "flex",
         ...shorthands.padding("15px", "20px", "0px"),
         columnGap: "10px",
@@ -89,7 +93,7 @@ export default function Layout() {
                     <Tab value="posts">Posts</Tab>
                 </TabList>
             </div>
-            <Divider />
+            <Divider className={styles.divider} />
             <Outlet/>
         </>
     );
