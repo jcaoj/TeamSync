@@ -10,8 +10,10 @@ import {
 } from "@fluentui/react-components";
 import Logo from "./logo2.png";
 import { Outlet, useNavigate } from 'react-router-dom'
-import { useContext, useRef } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Context } from "./Context";
+import axios from 'axios';
+
 
 const useStyles = makeStyles({
     root: {
@@ -33,7 +35,8 @@ const useStyles = makeStyles({
 
 export default function Layout() {
     const styles = useStyles()
-    const { currentPage, setCurrentPage } = useContext(Context);
+    const {statuses, setStatuses, teams, setTeams} = useContext(Context);
+    const [currentPage, setCurrentPage] = useState("projects");
     const navigate = useNavigate();
 
     const NavToPage = (event, data) => {
@@ -41,6 +44,31 @@ export default function Layout() {
         navigate("/" + data.value);
     }
 
+    function formatStatuses(statusesJSON) {
+        var formatted = [];
+        Object.keys(statusesJSON).forEach(function(key) {
+            formatted.push([statusesJSON[key].id, statusesJSON[key].description, statusesJSON[key].colour]);
+          });
+        setStatuses(formatted);
+    }
+
+    function formatTeams(teamsJSON) {
+        var teamsDict = {};
+        Object.keys(teamsJSON).forEach(function(key) {
+            teamsDict[teamsJSON[key].id] =teamsJSON[key];
+          });
+        setTeams(teamsDict);
+    }
+
+    useEffect(() => {
+        axios.get("http://localhost:8081/getStatuses")
+        .then(res => formatStatuses(res.data))
+        .catch(err => console.log(err));
+
+        axios.get("http://localhost:8081/getTeams")
+        .then(res => formatTeams(res.data))
+        .catch(err => console.log(err));
+    }, [])
 
     return (
         <>

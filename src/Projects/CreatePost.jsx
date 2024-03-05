@@ -11,8 +11,12 @@ export default function Posts(props) {
   }
   const handleUpload = () => {
     const formdata = new FormData();
-    formdata.append('image', files[0]);
-    axios.post("http://localhost:8081/upload", formdata)
+    for (let i=0; i < files.length; i++) {
+      console.log(files[i]);
+      formdata.append('image', files[i]);
+    }
+   
+    axios.post("http://localhost:8081/uploadPost", formdata)
     .then(res => console.log(res))
     .catch(err => console.log(err));
   }
@@ -60,32 +64,6 @@ export default function Posts(props) {
         previews.map((pic, index) => {
           return <img key={index} src={pic} alt={`preview-${index}`} />;
         })}
-
-      <div>
-        <Button onClick={handleUpload} appearance="primary">
-          Upload
-        </Button>
-      </div>
-      <div className="page-padding page">
-        <div className="title">
-          {isExistingProject ? (
-            <>
-              <Title2>{existingProject.name}</Title2>
-              <br />
-              <Title3>Team: {existingProject.team}</Title3>
-              <br />
-              <Text>{existingProject.description}</Text>
-              <br />
-              <br />
-              <div>
-                <Button onClick={() => props.createPost()} appearance="primary">
-                  Back To Projects
-                </Button>
-              </div>
-            </>
-          ) : null}
-        </div>
-      </div>
     </main>
   );
 }

@@ -1,5 +1,6 @@
 import React from "react";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
+import { Context } from "../Context";
 import {
     makeStyles,
     Body1,
@@ -29,20 +30,23 @@ const useStyles = makeStyles({
   
 export default function ProjectCard(props) {
     const styles = useStyles();
-    const [project, setProject] = useState(props.project)
+    const [project, setProject] = useState(props.project);
+    const {statuses, setStatuses, teams, setTeams} = useContext(Context);
 
     return (
+      <>
       <Card className={styles.card} onSelectionChange={()=>props.onProjectSelected(project)}>
         <CardHeader
           header={
             <Body1> <b>{project.name}</b> </Body1>
           }
-          description={<Caption1>{project.team}</Caption1>}
+          description={<Caption1>{teams[project.teamId].name}</Caption1>}
         />
   
         <p className={styles.text}> {project.description} </p>
         <p className={styles.text}> Imagine a second layered card here with a preview of the most recent post </p>
       </Card>
+      </>
     );
 }
 
