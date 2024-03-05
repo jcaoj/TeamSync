@@ -79,7 +79,6 @@ export default function Projects() {
   }, [])
 
   useEffect(() => {
-    console.log(teams)
     if (teams !== undefined) {
       setTeamsLoaded(true)
     }
