@@ -34,15 +34,18 @@ const db = mysql.createConnection({
 //#region Posts
 app.post('/uploadPost', upload.array('image'), (req, res) => {
     console.log(req.files);
+    const message = req.body.message;
+    console.log(message);
+
     const postSql = "INSERT INTO `posts`(`projectId`, `title`, `caption`, `created`) VALUES (1, ?, ?, ?)";
-    const imageSql = "INSERT INTO `imagesInPost`(`postId`, `image`) VALUES (?, ?)";
+    const imageSql = "INSERT INTO `imagesInPost`(`postId`, `image`, `caption`) VALUES (?, ?, ?)";
 
     db.query(postSql, ["testPost", "testCaption", new Date()], (err, result) => {
         if(err) return res.json({Message: err});
 
         // Upload images using postId from first query
         for(let i = 0; i < req.files.length; i++) {
-            db.query(imageSql, [result.insertId, req.files[i].filename], (err, result) => {
+            db.query(imageSql, [result.insertId, req.files[i].filename, message], (err, result) => {
                 if (err) console.log(err);
             })
         }
