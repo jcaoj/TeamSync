@@ -6,16 +6,24 @@ import './Posts.css';
 export default function Posts(props) {
   const [files, setFiles] = useState();
   const [previews, setPreviews] = useState();
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState([]);
 
   const handleFile = (e) => {
     setFiles(e.target.files[0]);
   }
   const handleUpload = () => {
     const formdata = new FormData();
-    formdata.append('image', files[0]);
+    for (let i=0; i < files.length; i++) {
+      console.log(files[i]);
+      formdata.append('image', files[i]);
+    }
+
+    axios.post("http://localhost:8081/uploadPost", formdata)
     formdata.append('message', message);
-    axios.post("http://localhost:8081/upload", formdata)
+    const config = {     
+      headers: { 'content-type': 'multipart/form-data' }
+    }
+    axios.post("http://localhost:8081/uploadPost", formdata, config)
     .then(res => console.log(res))
     .catch(err => console.log(err));
   }
@@ -48,9 +56,12 @@ export default function Posts(props) {
   return (
     <main className="container">
       <br />
-      <h3>Post Preview</h3>
+      <div className="title">
+        <Title2>Post Preview</Title2>
+        </div>
       <input
         type="file"
+        className="fileUpload"
         accept="image/jpg, image/jpeg, image/png"
         multiple
         onChange={(e) => {
@@ -61,17 +72,18 @@ export default function Posts(props) {
       />
       {previews &&
         previews.map((pic, index) => {
-          return <img key={index} src={pic} alt={`preview-${index}`} />;
+          return <img className="postImage" key={index} src={pic} alt={`preview-${index}`} />;
         })}
         <div class="message">
           <label>Message:</label>
           <textarea
+            className="messageInput"
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => setMessage([e.target.value])}
           />
         </div>
       <div>
-        <Button onClick={handleUpload} appearance="primary">
+        <Button className="uploadButton" onClick={handleUpload} appearance="primary">
           Upload
         </Button>
       </div>
