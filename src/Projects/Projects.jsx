@@ -16,6 +16,7 @@ import { AddSquare16Regular } from "@fluentui/react-icons";
 import CreateProjectModal from "./CreateProjectModal";
 import { Context } from "../Context";
 import CreatePostModal from "./CreatePostModal";
+import './Posts.css';
 import axios from 'axios';
 
 export default function Projects() {

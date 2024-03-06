@@ -34,7 +34,6 @@ const useStyles = makeStyles({
   },
 });
 
-
 export default function CreateTeamModal({ onCreate, onClose }) {
   const [teamName, setTeamName] = useState('');
   const [description, setDescription] = useState('');
