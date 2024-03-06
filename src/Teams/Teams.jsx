@@ -16,14 +16,14 @@ export default function Teams() {
   const handleCreateTeam = (newTeam) => {
     const updatedTeams = {
       ...teams,
-      [newTeam.id]: { ...newTeam, id: Date.now() }
+      [newTeam.id]: { ...newTeam}
     };
     setTeams(updatedTeams);
     setIsModalOpen(false);
   };
 
 
-  const teamsArray = teams ? Object.values(teams) : [];
+  const teamsArray = teams ? Object.values(teams) : []; //DataGrid in TeamTable.jsx requires an array to render the table
 
   return (
     <div className="page">
