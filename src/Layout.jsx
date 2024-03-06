@@ -22,7 +22,7 @@ const useStyles = makeStyles({
         flexDirection: "row",
         position: "sticky",
         top: "0",
-        zIndex: "5000",
+        zIndex: "10",
         backgroundColor: "inherit",
         justifyContent: "flex",
         ...shorthands.padding("15px", "20px", "0px"),

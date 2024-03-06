@@ -15,6 +15,8 @@ import { Button, Text, Title2,
 import { AddSquare16Regular } from "@fluentui/react-icons";
 import CreateProjectModal from "./CreateProjectModal";
 import { Context } from "../Context";
+import CreatePostModal from "./CreatePostModal";
+import './Posts.css';
 import axios from 'axios';
 
 export default function Projects() {
@@ -23,16 +25,25 @@ export default function Projects() {
   const [selectedProject, setSelectedProject] = useState();
   const [projects, setProjects] = useState([]);
   const [teamProjects, setTeamProjects] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [projectsLoaded, setProjectsLoaded] = useState(false);
   const [teamsLoaded, setTeamsLoaded] = useState(false);
+  const [isPostModalOpen, setIsPostModalOpen] = useState(false);
 
   function createProject(project) {
     setProjects([...projects, project]); 
-    setIsModalOpen(false);
+    setIsProjectModalOpen(false);
     axios.post(`http://localhost:8081/uploadProject?teamId=${project.teamId}&name=${project.name}&description=${project.description}&status=${project.status}`)
     .then(res => console.log(res))
     .catch(err => console.log(err));
+  }
+
+  function createPost(post) {
+    setProjects([...projects, post]);
+    setIsPostModalOpen(false);
+    axios.post(`http://localhost:8081/uploadPost?projectId=${post.image}&message=${post.message}`)
+      .then(res => console.log(res))
+      .catch(err => console.log(err));
   }
 
   function onReturnToProjects() {
@@ -76,7 +87,7 @@ export default function Projects() {
         setProjectsLoaded(true)
       })
       .catch(err => console.log(err));
-  }, [])
+  }, [teams])
 
   useEffect(() => {
     if (teams !== undefined) {
@@ -102,8 +113,8 @@ export default function Projects() {
             </MenuTrigger>
             <MenuPopover>
               <MenuList>
-                <MenuItem onClick={() => setIsModalOpen(true)}>Project</MenuItem>
-                <MenuItem>Update</MenuItem>
+                <MenuItem onClick={() => setIsProjectModalOpen(true)}>Project</MenuItem>
+                <MenuItem onClick={() => setIsPostModalOpen(true)}>Update</MenuItem>
               </MenuList>
             </MenuPopover>
           </Menu>
@@ -120,7 +131,8 @@ export default function Projects() {
       <Spinner/>
     )}
 
-    {isModalOpen && <CreateProjectModal onCreate={createProject} onClose={() => setIsModalOpen(false)} />}
+    {isProjectModalOpen && <CreateProjectModal onCreate={createProject} onClose={() => setIsProjectModalOpen(false)} />}
+    {isPostModalOpen && <CreatePostModal onCreate={createPost} onClose={() => setIsPostModalOpen(false)} />} {/* Render post modal */}
     </>
   );
 }

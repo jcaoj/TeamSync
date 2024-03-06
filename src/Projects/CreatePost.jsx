@@ -87,7 +87,6 @@ export default function Posts(props) {
           Upload
         </Button>
       </div>
-    
     </main>
   );
 }
