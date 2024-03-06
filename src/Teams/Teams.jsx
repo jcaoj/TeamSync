@@ -11,13 +11,9 @@ export default function Teams() {
 
   useEffect(() => {
     setCurrentPage("teams");
-
-    // If the teams aren't already in the correct format, you'd fetch and set them here
-    // Since we're assuming they are already in the correct format, we don't need to do anything
   }, [setCurrentPage]);
 
   const handleCreateTeam = (newTeam) => {
-    // Create a new team object with a unique ID (for demo purposes using Date.now())
     const updatedTeams = {
       ...teams,
       [newTeam.id]: { ...newTeam, id: Date.now() }
@@ -26,7 +22,7 @@ export default function Teams() {
     setIsModalOpen(false);
   };
 
-  // Convert the 'teams' object from context to an array for the TeamTable
+
   const teamsArray = teams ? Object.values(teams) : [];
 
   return (

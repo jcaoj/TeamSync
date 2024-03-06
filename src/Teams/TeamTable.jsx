@@ -12,7 +12,7 @@ import {
 } from '@fluentui/react-components';
 import { OpenRegular, EditRegular, DeleteRegular } from '@fluentui/react-icons';
 
-export default function TeamTable({ teams = [] }) { // Default value for teams prop
+export default function TeamTable({ teams = [] }) { 
   const columns = [
     createTableColumn({
       columnId: 'teamName',
@@ -44,7 +44,7 @@ export default function TeamTable({ teams = [] }) { // Default value for teams p
 
   return (
     <DataGrid
-      items={teams} // Passed teams as an array
+      items={teams} 
       columns={columns}
       sortable
       getRowId={(item) => item.id.toString()}
