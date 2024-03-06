@@ -49,11 +49,11 @@ export default function Layout() {
     }
 
     function formatStatuses(statusesJSON) {
-        var formatted = [];
+        var statusDict = {};
         Object.keys(statusesJSON).forEach(function(key) {
-            formatted.push([statusesJSON[key].id, statusesJSON[key].description, statusesJSON[key].colour]);
+            statusDict[statusesJSON[key].id] = statusesJSON[key];
           });
-        setStatuses(formatted);
+        setStatuses(statusDict);
     }
 
     function formatTeams(teamsJSON) {

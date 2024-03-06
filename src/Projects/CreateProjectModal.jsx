@@ -15,6 +15,7 @@ export default function CreateProjectModal({ onCreate, onClose}) {
     const [status, setStatus] = useState('');
 
     const [teamsArray, setTeamsArray] = useState([]);
+    const [statusesArray, setStatusesArray] = useState([]);
     const {statuses, setStatuses, teams, setTeams} = useContext(Context);
 
     const handleSubmit = (e) => {
@@ -23,11 +24,17 @@ export default function CreateProjectModal({ onCreate, onClose}) {
     };
 
     useEffect(()=> {
-        var formatted = [];
+        var teamsFormatted = [];
         Object.keys(teams).forEach(function(key) {
-            formatted.push([teams[key].id, teams[key].name]);
+            teamsFormatted.push([teams[key].id, teams[key].name]);
             });
-        setTeamsArray(formatted);
+        setTeamsArray(teamsFormatted);
+
+        var statusesformatted = [];
+        Object.keys(statuses).forEach(function(key) {
+            statusesformatted.push([statuses[key].id, statuses[key].description, statuses[key].colour]);
+          });
+        setStatusesArray(statusesformatted);
     }, [])
 
     return (
@@ -68,7 +75,7 @@ export default function CreateProjectModal({ onCreate, onClose}) {
                     placeholder="Select a status"
                     className="input"
                     onOptionSelect={(e, data) => setStatus(data.optionValue)}>
-                    {statuses.map((status) => (
+                    {statusesArray.map((status) => (
                         <Option key={status[0]} text={status[1]} value={status[0]} >
                             {status[1]}
                         </Option>
