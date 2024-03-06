@@ -9,10 +9,26 @@ export default function CreatePostModal({ onCreate, onClose}) {
     const [files, setFiles] = useState();
     const [previews, setPreviews] = useState();
     const [message, setMessage] = useState([]);
+    const [projectName, setProjectName] = useState('');
+    const [description, setDescription] = useState('');
+    const [status, setStatus] = useState('');
 
-    const handleFile = (e) => {
-      setFiles(e.target.files[0]);
-    }
+    const [projectsArray, setProjectsArray] = useState([]);
+    const {statuses, setStatuses, projects} = useContext(Context);
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      onCreate({ name: projectName, description: description, status: status});
+  };
+  
+  useEffect(()=> {
+    var formatted = [];
+    Object.keys(projects).forEach(function(key) {
+        formatted.push([projects[key].id, projects[key].name]);
+        });
+    setProjectsArray(formatted);
+  }, [projects])
+
     const handleUpload = () => {
         if (!files || files.length === 0) {
           console.log("No image selected for upload");
@@ -58,18 +74,29 @@ export default function CreatePostModal({ onCreate, onClose}) {
       description: "Project Description",
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onCreate({ id: Date.now(), name: setFiles, setMessage });
-      };
+
 
     return (
       <div className="modal">
           <div className="modal-content">
             <div className="title">
-              <Title2>Post Preview</Title2>
+              <Title2>Create post</Title2>
             </div>
           <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+          <Label htmlFor="team" size="large">
+                    Project
+                </Label>
+                <Dropdown
+                    aria-labelledby="project"
+                    placeholder="Select a project"
+                    className="input"
+                    onOptionSelect={(e, data) => setProjectName(data.optionValue[1])}>
+                    {projectsArray.map((option) => (
+                        <Option key={option} value={option[0]}>
+                            {option[1]}
+                        </Option>
+                    ))}
+                </Dropdown>
         <input
           type="file"
           className="fileUpload"
