@@ -22,7 +22,7 @@ const useStyles = makeStyles({
         flexDirection: "row",
         position: "sticky",
         top: "0",
-        zIndex: "5000",
+        zIndex: "10",
         backgroundColor: "inherit",
         justifyContent: "flex",
         ...shorthands.padding("15px", "20px", "0px"),
@@ -39,7 +39,7 @@ const useStyles = makeStyles({
 
 export default function Layout() {
     const styles = useStyles()
-    const {statuses, setStatuses, teams, setTeams} = useContext(Context);
+    const {statuses, setStatuses, teams, setTeams, projects, setProjects} = useContext(Context);
     const [currentPage, setCurrentPage] = useState("projects");
     const navigate = useNavigate();
 
@@ -59,9 +59,17 @@ export default function Layout() {
     function formatTeams(teamsJSON) {
         var teamsDict = {};
         Object.keys(teamsJSON).forEach(function(key) {
-            teamsDict[teamsJSON[key].id] =teamsJSON[key];
+            teamsDict[teamsJSON[key].id] = teamsJSON[key];
           });
         setTeams(teamsDict);
+    }
+
+    function formatProjects(projectsJSON) {
+        var projectsDict = {};
+        Object.keys(projectsJSON).forEach(function(key) {
+            projectsDict[projectsJSON[key].id] = projectsJSON[key];
+          });
+        setProjects(projectsDict);
     }
 
     useEffect(() => {
@@ -71,6 +79,10 @@ export default function Layout() {
 
         axios.get("http://localhost:8081/getTeams")
         .then(res => formatTeams(res.data))
+        .catch(err => console.log(err));
+
+        axios.get("http://localhost:8081/getProjects")
+        .then(res => formatProjects(res.data))
         .catch(err => console.log(err));
     }, [])
 
