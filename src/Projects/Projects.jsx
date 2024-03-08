@@ -14,7 +14,6 @@ import './Posts.css';
 import CreateProjectModal from "./CreateProjectModal";
 import CreatePostModal from "./CreatePostModal";
 import ProjectCard from "./ProjectCard";
-import ViewCreateProjects from "./ViewProject";
 import CreateButton from "./CreateButton";
 import { Context } from "../Context";
 import axios from 'axios';
@@ -97,7 +96,6 @@ export default function Projects() {
   return (
     <>
     { projectsLoaded && teamsLoaded ? (
-      !viewProject ? (
       <div className="page">
         <ProjectsList title="My Projects" list={projects} onProjectSelected={projectSelected}
         noProjectsText="You are not following any projects. Create a project or follow an existing project."></ProjectsList>
@@ -111,10 +109,6 @@ export default function Projects() {
         <br/>
       </div>
       ) : (
-        <>
-          <ViewCreateProjects onReturnToProjects={onReturnToProjects} project={selectedProject ? selectedProject : null}></ViewCreateProjects>
-        </>
-    )) : (
       <Spinner/>
     )}
 
