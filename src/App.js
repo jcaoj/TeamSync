@@ -4,6 +4,7 @@ import Projects from './Projects/Projects';
 import Teams from './Teams/Teams';
 import Posts from './Projects/CreatePost';
 import ViewProject from "./Projects/ViewProject";
+import Login from "./Login";
 import './App.css';
 import Layout from './Layout';
 
@@ -20,6 +21,7 @@ function App() {
           <Route exact path="/viewProject/:id" element={<ViewProject/>} />
           <Route path="*" element={<Projects />} />
         </Route>
+        <Route path="/login" element={<Login />}></Route>
       </Routes>
     </BrowserRouter>
   );

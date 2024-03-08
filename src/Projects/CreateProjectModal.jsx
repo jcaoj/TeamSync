@@ -22,7 +22,8 @@ export default function CreateProjectModal({ onCreate, onClose, editProject = nu
     const [statusesArray, setStatusesArray] = useState([]);
     const { statuses, setStatuses, teams, setTeams } = useContext(Context);
 
-    function createProject() {
+    const createProject = (e) => {
+        e.preventDefault();
         onCreate({ isEditProject: isEditProject, name: projectName, description: description, teamId: selectedTeam, status: status });
     }
 
@@ -63,7 +64,7 @@ export default function CreateProjectModal({ onCreate, onClose, editProject = nu
                             <div className="title">
                                 <Title2>{isEditProject ? "Edit " + projectName : "Create a New Project"}</Title2>
                             </div>
-                            <form style={{ width: '100%' }}>
+                            <form onSubmit={createProject} style={{ width: '100%' }}>
                                 <Label htmlFor="projectName" size="large">
                                     Name
                                 </Label>
@@ -118,7 +119,7 @@ export default function CreateProjectModal({ onCreate, onClose, editProject = nu
                                 />
                                 <div className="buttonGroup">
                                     <Button onClick={onClose}>Close</Button>
-                                    <Button appearance="primary" onClick={createProject}>{isEditProject ? "Edit" : "Create"}</Button>
+                                    <Button appearance="primary" type="submit">{isEditProject ? "Edit" : "Create"}</Button>
                                 </div>
                             </form>
                         </>
