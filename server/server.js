@@ -60,6 +60,13 @@ app.get('/getPosts', (req, res) => {
         return res.json(result);
     })
 })
+app.get('/getPosts', (req, res) => {
+    const sql = "select * from posts where id=?";
+    db.query(sql, (err, result) => {
+        if(err) return res.json({Message: err});
+        return res.json(result);
+    })
+})
 //#endregion
 
 //#region Projects
