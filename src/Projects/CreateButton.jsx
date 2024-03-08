@@ -22,7 +22,7 @@ export default function CreateButton(props) {
                     <MenuPopover>
                         <MenuList>
                             <MenuItem onClick={() => props.setIsProjectModalOpen(true)}>Project</MenuItem>
-                            <MenuItem onClick={() => props.setIsPostModalOpen(true)}>Update</MenuItem>
+                            <MenuItem onClick={() => props.setIsPostModalOpen(true)}>Post</MenuItem>
                         </MenuList>
                     </MenuPopover>
                 </Menu>
