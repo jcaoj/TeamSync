@@ -74,7 +74,7 @@ export default function Posts(props) {
         previews.map((pic, index) => {
           return <img className="postImage" key={index} src={pic} alt={`preview-${index}`} />;
         })}
-        <div class="message">
+        <div className="message">
           <label>Message:</label>
           <textarea
             className="messageInput"

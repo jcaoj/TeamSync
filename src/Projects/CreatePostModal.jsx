@@ -110,7 +110,7 @@ export default function CreatePostModal({ onCreate, onClose}) {
           previews.map((pic, index) => {
             return <img className="postImage" key={index} src={pic} alt={`preview-${index}`} />;
           })}
-          <div class="message">
+          <div className="message">
             <label>Message:</label>
             <Textarea
               className="input"

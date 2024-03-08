@@ -6,7 +6,14 @@ import {
     Tab,
     TabList,
     Subtitle1,
-    Divider
+    Subtitle2,
+    Divider,
+    Avatar,
+    Menu,
+    MenuTrigger,
+    MenuList,
+    MenuItem,
+    MenuPopover,
 } from "@fluentui/react-components";
 import Logo from "./logo2.png";
 import { Outlet, useNavigate } from 'react-router-dom'
@@ -34,12 +41,20 @@ const useStyles = makeStyles({
         flexDirection: "row",
         columnGap: "10px",
         marginBottom: "8px"
+    },
+    avatar: {
+        right: "10px",
+        top: "15px",
+        position: "absolute"
+    },
+    username: {
+        ...shorthands.padding("0px", "10px"),
     }
 });
 
 export default function Layout() {
     const styles = useStyles()
-    const {statuses, setStatuses, teams, setTeams, projects, setProjects} = useContext(Context);
+    const { username, setUsername, userId, setUserId, statuses, setStatuses, teams, setTeams, projects, setProjects } = useContext(Context);
     const [currentPage, setCurrentPage] = useState("projects");
     const navigate = useNavigate();
 
@@ -48,66 +63,98 @@ export default function Layout() {
         navigate("/" + data.value);
     }
 
+    function sendToLogin() {
+        setUsername(null);
+        setUserId(null);
+        localStorage.removeItem("username")
+        localStorage.removeItem("userId")
+        navigate("/login");
+    }
+
     function formatStatuses(statusesJSON) {
         var statusDict = {};
-        Object.keys(statusesJSON).forEach(function(key) {
+        Object.keys(statusesJSON).forEach(function (key) {
             statusDict[statusesJSON[key].id] = statusesJSON[key];
-          });
+        });
         setStatuses(statusDict);
     }
 
     function formatTeams(teamsJSON) {
         var teamsDict = {};
-        Object.keys(teamsJSON).forEach(function(key) {
+        Object.keys(teamsJSON).forEach(function (key) {
             teamsDict[teamsJSON[key].id] = teamsJSON[key];
-          });
+        });
         setTeams(teamsDict);
     }
 
     function formatProjects(projectsJSON) {
         var projectsDict = {};
-        Object.keys(projectsJSON).forEach(function(key) {
+        Object.keys(projectsJSON).forEach(function (key) {
             projectsDict[projectsJSON[key].id] = projectsJSON[key];
-          });
+        });
         setProjects(projectsDict);
     }
 
     useEffect(() => {
+        if (!username && localStorage.getItem("username")) {
+            setUsername(localStorage.getItem("username"))
+            setUserId(localStorage.getItem("userId"))
+        }
+        else if (!username) {
+            sendToLogin()
+        }
         axios.get("http://localhost:8081/getStatuses")
-        .then(res => formatStatuses(res.data))
-        .catch(err => console.log(err));
+            .then(res => formatStatuses(res.data))
+            .catch(err => console.log(err));
 
         axios.get("http://localhost:8081/getTeams")
-        .then(res => formatTeams(res.data))
-        .catch(err => console.log(err));
+            .then(res => formatTeams(res.data))
+            .catch(err => console.log(err));
 
         axios.get("http://localhost:8081/getProjects")
-        .then(res => formatProjects(res.data))
-        .catch(err => console.log(err));
+            .then(res => formatProjects(res.data))
+            .catch(err => console.log(err));
     }, [])
 
     return (
-        <>
-            <div className={styles.root}>
-                <div className={styles.logoTitle}>
-                    <Image
-                        alt="TeamSync Logo"
-                        src={Logo}
-                        height={35}
-                        width={35}
-                    />
-                    <Subtitle1>TeamSync</Subtitle1>
-                </div>
-                <TabList selectedValue={currentPage} onTabSelect={NavToPage}>
-                    <Tab value="projects">Projects</Tab>
-                    <Tab value="teams">Teams</Tab>
-                    <Tab value="settings">Settings</Tab>
-                    <Tab value="posts">Posts</Tab>
-                </TabList>
-            </div>
-            <Divider className={styles.divider} />
-            <Outlet/>
-        </>
+                <>
+                    <div className={styles.root}>
+                        <div className={styles.logoTitle}>
+                            <Image
+                                alt="TeamSync Logo"
+                                src={Logo}
+                                height={35}
+                                width={35}
+                            />
+                            <Subtitle1>TeamSync</Subtitle1>
+                        </div>
+                        <TabList selectedValue={currentPage} onTabSelect={NavToPage}>
+                            <Tab value="projects">Projects</Tab>
+                            <Tab value="teams">Teams</Tab>
+                            <Tab value="settings">Settings</Tab>
+                            <Tab value="posts">Posts</Tab>
+                        </TabList>
+                        <div className={styles.avatar}>
+                            <Menu>
+                                <MenuTrigger disableButtonEnhancement>
+                                    <Avatar name={username} />
+                                </MenuTrigger>
+
+                                <MenuPopover>
+                                    <Subtitle2 className={styles.username}>{username}</Subtitle2>
+                                    <br/><br/>
+                                    <MenuList>
+                                        <MenuItem>View Archived Projects</MenuItem>
+                                        <MenuItem onClick={sendToLogin}>Log Out</MenuItem>
+                                    </MenuList>
+                                </MenuPopover>
+                            </Menu>
+                           
+                        </div>
+                    </div>
+                    <Divider className={styles.divider} />
+                    <Outlet />
+                </>
     );
 }
 
