@@ -1,8 +1,5 @@
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import "./Projects.css";
-import ProjectCard from "./ProjectCard";
-import ViewCreateProjects from "./ViewProject";
 import { Button, Text, Title2, 
   Menu,
   MenuButton,
@@ -12,11 +9,13 @@ import { Button, Text, Title2,
   MenuTrigger,
   Spinner
  } from '@fluentui/react-components';
-import { AddSquare16Regular } from "@fluentui/react-icons";
-import CreateProjectModal from "./CreateProjectModal";
-import { Context } from "../Context";
-import CreatePostModal from "./CreatePostModal";
+import "./Projects.css";
 import './Posts.css';
+import CreateProjectModal from "./CreateProjectModal";
+import CreatePostModal from "./CreatePostModal";
+import ProjectCard from "./ProjectCard";
+import CreateButton from "./CreateButton";
+import { Context } from "../Context";
 import axios from 'axios';
 
 export default function Projects() {
@@ -39,7 +38,6 @@ export default function Projects() {
   }
 
   function createPost(post) {
-    setProjects([...projects, post]);
     setIsPostModalOpen(false);
     axios.post(`http://localhost:8081/uploadPost?projectId=${post.image}&message=${post.message}`)
       .then(res => console.log(res))
@@ -98,7 +96,6 @@ export default function Projects() {
   return (
     <>
     { projectsLoaded && teamsLoaded ? (
-      !viewProject ? (
       <div className="page">
         <ProjectsList title="My Projects" list={projects} onProjectSelected={projectSelected}
         noProjectsText="You are not following any projects. Create a project or follow an existing project."></ProjectsList>
@@ -106,28 +103,12 @@ export default function Projects() {
         <ProjectsList title="Team Projects" list={teamProjects} onProjectSelected={projectSelected}
         noProjectsText="There are no projects in your teams that you aren't following."></ProjectsList>
         <br/>
-        <div className="createButton">
-          <Menu>
-            <MenuTrigger disableButtonEnhancement>
-              <MenuButton menuIcon={<AddSquare16Regular/>}appearance="primary">Create</MenuButton>
-            </MenuTrigger>
-            <MenuPopover>
-              <MenuList>
-                <MenuItem onClick={() => setIsProjectModalOpen(true)}>Project</MenuItem>
-                <MenuItem onClick={() => setIsPostModalOpen(true)}>Update</MenuItem>
-              </MenuList>
-            </MenuPopover>
-          </Menu>
-        </div>
+        <CreateButton setIsProjectModalOpen={setIsProjectModalOpen} setIsPostModalOpen={setIsPostModalOpen}></CreateButton>
         <br/>
         <br/>
         <br/>
       </div>
       ) : (
-        <>
-          <ViewCreateProjects onReturnToProjects={onReturnToProjects} project={selectedProject ? selectedProject : null}></ViewCreateProjects>
-        </>
-    )) : (
       <Spinner/>
     )}
 

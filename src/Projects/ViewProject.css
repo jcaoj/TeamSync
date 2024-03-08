@@ -1,0 +1,32 @@
+.responsive-two-column-grid {
+    display:block;
+}
+
+/* columns */
+.responsive-two-column-grid > * {
+    padding:0.2rem;
+}
+
+/* tablet breakpoint */
+@media (min-width:768px) {
+    .responsive-two-column-grid {
+        display: grid;
+        grid-template-columns: 4fr 1fr;
+    }
+}
+
+.statusIcon {
+    padding-left: 3px;
+    transform: translateY(4px);
+    display: inline;
+}
+
+.statusIconCard {
+    padding-right: 5px;
+    transform: translateY(4px);
+    display: inline;
+}
+
+.toolbar {
+    justify-content: space-between;
+}

@@ -69,12 +69,27 @@ app.post('/uploadProject', (req, res) => {
         if(err) return res.json({Message: err});
         return res.json({Status: result});
     })
+})
 
+app.post('/editProject', (req, res) => {
+    const sql = "UPDATE `projects` SET `teamId` = ?, `name` = ?, `description` = ?, `status` = ?, `modified` = ? WHERE `id` = ?";
+    db.query(sql, [req.query.teamId, req.query.name, req.query.description, req.query.status, new Date(), req.query.id], (err, result) => {
+        if(err) return res.json({Message: err});
+        return res.json({Status: result});
+    })
 })
 
 app.get('/getProjects', (req, res) => {
     const sql = "select * from projects";
     db.query(sql, (err, result) => {
+        if(err) return res.json({Message: err});
+        return res.json(result);
+    })
+})
+
+app.get('/getProjectById', (req, res) => {
+    const sql = "select * from projects where id=?";
+    db.query(sql, [req.query.projectId], (err, result) => {
         if(err) return res.json({Message: err});
         return res.json(result);
     })

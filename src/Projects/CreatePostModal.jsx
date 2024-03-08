@@ -74,8 +74,6 @@ export default function CreatePostModal({ onCreate, onClose}) {
       description: "Project Description",
     };
 
-
-
     return (
       <div className="modal">
           <div className="modal-content">
