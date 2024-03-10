@@ -1,9 +1,7 @@
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import "./Projects.css";
-import ProjectCard from "./ProjectCard";
-import ViewCreateProjects from "./ViewProject";
-import { Button, Text, Title2, 
+import {
+  Button, Text, Title2,
   Menu,
   MenuButton,
   MenuItem,
@@ -11,18 +9,18 @@ import { Button, Text, Title2,
   MenuPopover,
   MenuTrigger,
   Spinner
- } from '@fluentui/react-components';
-import { AddSquare16Regular } from "@fluentui/react-icons";
-import CreateProjectModal from "./CreateProjectModal";
-import { Context } from "../Context";
-import CreatePostModal from "./CreatePostModal";
+} from '@fluentui/react-components';
+import "./Projects.css";
 import './Posts.css';
+import CreateProjectModal from "./CreateProjectModal";
+import CreatePostModal from "./CreatePostModal";
+import ProjectCard from "./ProjectCard";
+import CreateButton from "./CreateButton";
+import { Context } from "../Context";
 import axios from 'axios';
 
 export default function Projects() {
-  const {currentPage, setCurrentPage, statuses, setStatuses, teams, setTeams} = useContext(Context);
-  const [viewProject, setViewProject] = useState(false);
-  const [selectedProject, setSelectedProject] = useState();
+  const { username, userId, currentPage, setCurrentPage, statuses, setStatuses, teams, setTeams } = useContext(Context);
   const [projects, setProjects] = useState([]);
   const [teamProjects, setTeamProjects] = useState([]);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
@@ -31,108 +29,78 @@ export default function Projects() {
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
 
   function createProject(project) {
-    setProjects([...projects, project]); 
+    setProjects([...projects, project]);
     setIsProjectModalOpen(false);
     axios.post(`http://localhost:8081/uploadProject?teamId=${project.teamId}&name=${project.name}&description=${project.description}&status=${project.status}`)
-    .then(res => console.log(res))
-    .catch(err => console.log(err));
+      .then(res => console.log(res))
+      .catch(err => console.log(err));
   }
 
   function createPost(post) {
-    setProjects([...projects, post]);
     setIsPostModalOpen(false);
     axios.post(`http://localhost:8081/uploadPost?projectId=${post.image}&message=${post.message}`)
       .then(res => console.log(res))
       .catch(err => console.log(err));
   }
 
-  function onReturnToProjects() {
-    setViewProject(false)
-    setSelectedProject(null)
-  }
-
-  function projectSelected(project) {
-    setViewProject(true)
-    setSelectedProject(project)
-  }
-
   function ProjectsList(props) {
     return (
       <>
         <div className="title">
-        <Title2>{props.title}</Title2>
+          <Title2>{props.title}</Title2>
         </div>
         {
-          props.list.length > 0 ? ( 
+          props.list.length > 0 ? (
             <div className="grid">
               {props.list.map(project => (
-                  <ProjectCard key={project.id} onProjectSelected={props.onProjectSelected} project={project} teams={teams}></ProjectCard>))}
+                <ProjectCard key={project.id} project={project} teams={teams}></ProjectCard>))}
             </div>
           ) : (
-          <div>
-            <Text align="center">{props.noProjectsText}</Text>
-          </div>
+            <div>
+              <Text align="center">{props.noProjectsText}</Text>
+            </div>
           )
         }
       </>
     );
   }
-  
+
+  function timeout(delay) {
+    return new Promise(res => setTimeout(res, delay));
+  }
+
   useEffect(() => {
-      setCurrentPage("projects")
-      axios.get("http://localhost:8081/getProjects")
+    setCurrentPage("projects")
+    axios.get("http://localhost:8081/getProjects")
       .then(res => {
         setProjects(res.data)
         setTeamProjects(res.data)
         setProjectsLoaded(true)
       })
       .catch(err => console.log(err));
-  }, [teams])
-
-  useEffect(() => {
-    if (teams !== undefined) {
-      setTeamsLoaded(true)
-    }
-  }, teams)
+  }, [])
 
   return (
     <>
-    { projectsLoaded && teamsLoaded ? (
-      !viewProject ? (
-      <div className="page">
-        <ProjectsList title="My Projects" list={projects} onProjectSelected={projectSelected}
-        noProjectsText="You are not following any projects. Create a project or follow an existing project."></ProjectsList>
-        <br/>
-        <ProjectsList title="Team Projects" list={teamProjects} onProjectSelected={projectSelected}
-        noProjectsText="There are no projects in your teams that you aren't following."></ProjectsList>
-        <br/>
-        <div className="createButton">
-          <Menu>
-            <MenuTrigger disableButtonEnhancement>
-              <MenuButton menuIcon={<AddSquare16Regular/>}appearance="primary">Create</MenuButton>
-            </MenuTrigger>
-            <MenuPopover>
-              <MenuList>
-                <MenuItem onClick={() => setIsProjectModalOpen(true)}>Project</MenuItem>
-                <MenuItem onClick={() => setIsPostModalOpen(true)}>Update</MenuItem>
-              </MenuList>
-            </MenuPopover>
-          </Menu>
+      {projectsLoaded ? (
+        <div className="page">
+          <ProjectsList title="My Projects" list={projects}
+            noProjectsText="You are not following any projects. Create a project or follow an existing project."></ProjectsList>
+          <br />
+          <ProjectsList title="Team Projects" list={teamProjects}
+            noProjectsText="There are no projects in your teams that you aren't following."></ProjectsList>
+          <br />
+          <CreateButton setIsProjectModalOpen={setIsProjectModalOpen} setIsPostModalOpen={setIsPostModalOpen}></CreateButton>
+          <br />
+          <br />
+          <br />
         </div>
-        <br/>
-        <br/>
-        <br/>
-      </div>
       ) : (
-        <>
-          <ViewCreateProjects onReturnToProjects={onReturnToProjects} project={selectedProject ? selectedProject : null}></ViewCreateProjects>
-        </>
-    )) : (
-      <Spinner/>
-    )}
+        <Spinner />
+      )}
 
-    {isProjectModalOpen && <CreateProjectModal onCreate={createProject} onClose={() => setIsProjectModalOpen(false)} />}
-    {isPostModalOpen && <CreatePostModal onCreate={createPost} onClose={() => setIsPostModalOpen(false)} />} {/* Render post modal */}
+      {isProjectModalOpen && <CreateProjectModal onCreate={createProject} onClose={() => setIsProjectModalOpen(false)} />}
+      {isPostModalOpen && <CreatePostModal onCreate={createPost} onClose={() => setIsPostModalOpen(false)} />} {/* Render post modal */}
     </>
   );
 }

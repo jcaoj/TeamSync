@@ -74,13 +74,11 @@ export default function CreatePostModal({ onCreate, onClose}) {
       description: "Project Description",
     };
 
-
-
     return (
       <div className="modal">
           <div className="modal-content">
             <div className="title">
-              <Title2>Create post</Title2>
+              <Title2>Create Post</Title2>
             </div>
           <form onSubmit={handleSubmit} style={{ width: '100%' }}>
           <Label htmlFor="team" size="large">
@@ -112,7 +110,7 @@ export default function CreatePostModal({ onCreate, onClose}) {
           previews.map((pic, index) => {
             return <img className="postImage" key={index} src={pic} alt={`preview-${index}`} />;
           })}
-          <div class="message">
+          <div className="message">
             <label>Message:</label>
             <Textarea
               className="input"

@@ -76,12 +76,27 @@ app.post('/uploadProject', (req, res) => {
         if(err) return res.json({Message: err});
         return res.json({Status: result});
     })
+})
 
+app.post('/editProject', (req, res) => {
+    const sql = "UPDATE `projects` SET `teamId` = ?, `name` = ?, `description` = ?, `status` = ?, `modified` = ? WHERE `id` = ?";
+    db.query(sql, [req.query.teamId, req.query.name, req.query.description, req.query.status, new Date(), req.query.id], (err, result) => {
+        if(err) return res.json({Message: err});
+        return res.json({Status: result});
+    })
 })
 
 app.get('/getProjects', (req, res) => {
     const sql = "select * from projects";
     db.query(sql, (err, result) => {
+        if(err) return res.json({Message: err});
+        return res.json(result);
+    })
+})
+
+app.get('/getProjectById', (req, res) => {
+    const sql = "select * from projects where id=?";
+    db.query(sql, [req.query.projectId], (err, result) => {
         if(err) return res.json({Message: err});
         return res.json(result);
     })
@@ -116,5 +131,24 @@ app.get('/getStatuses', (req, res) => {
 })
 //#endregion
 
+//#region User
+app.post('/signUp', (req, res) => {
+    const sql = "INSERT INTO `users`(`username`, `password`) VALUES (?, ?)";
+    db.query(sql, [req.query.username, req.query.password], (err, result) => {
+        if(err) return res.json({Message: err});
+        return res.json(result);
+    })
+})
+
+app.get('/getUserByUsername', (req, res) => {
+    const sql = "select * from users where username=?";
+    db.query(sql, [req.query.username],(err, result) => {
+        if(err) return res.json({Message: err});
+        return res.json(result);
+    })
+})
+
+
+//#endregion
 app.listen(8081, () => {console.log("Running")})
 
