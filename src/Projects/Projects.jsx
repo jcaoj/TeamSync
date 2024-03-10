@@ -71,7 +71,7 @@ export default function Projects() {
 
   useEffect(() => {
     setCurrentPage("projects")
-    axios.get("http://localhost:8081/getProjects")
+    axios.get(`http://localhost:8081/getProjectByUserId?userId=${userId}`)
       .then(res => {
         setProjects(res.data)
         setTeamProjects(res.data)
