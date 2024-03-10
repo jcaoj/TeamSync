@@ -15,6 +15,7 @@ import {
   CardFooter,
   CardHeader,
   CardPreview,
+  Spinner
 } from "@fluentui/react-components";
 import {
   FolderOpen16Filled,
@@ -41,11 +42,20 @@ export default function ProjectCard(props) {
   const styles = useStyles();
   const [project, setProject] = useState(props.project);
   const { statuses, setStatuses, teams, setTeams } = useContext(Context);
+  const [contextLoaded, setContextLoaded] = useState(false);
+
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (statuses && teams) {
+      setContextLoaded(true)
+    }
+  }, [statuses, teams])
+
   return (
-    <>
-      <Card className={styles.card} onSelectionChange={() => navigate("/viewProject/" + project.id)}>
+    <> {
+      contextLoaded ? (
+        <Card className={styles.card} onSelectionChange={() => navigate("/viewProject/" + project.id)}>
         <CardHeader
           header={
             <>
@@ -77,6 +87,10 @@ export default function ProjectCard(props) {
         <p className={styles.text}> {project.description} </p>
         <p className={styles.text}> Imagine a second layered card here with a preview of the most recent post </p>
       </Card>
+      ) : (
+        <Spinner/>
+      )
+    }
     </>
   );
 }
