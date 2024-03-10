@@ -126,9 +126,12 @@ export default function ViewProject(props) {
                     <Title2>{viewProject.name}</Title2>
                   </div>
                   <div>
-                    <Button appearance="primary">
+                    <Button appearance="primary"onClick={() => setIsPostModalOpen(true)}>
                       Create Post
                     </Button>
+                    {isPostModalOpen && (
+                      <CreatePostModal onCreate={createPost} onClose={() => setIsPostModalOpen(false)} />
+                    )}
                   </div>
                 </div>
                 <div>
