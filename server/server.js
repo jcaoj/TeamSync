@@ -97,6 +97,18 @@ app.get('/getProjectById', (req, res) => {
 //#endregion
 
 //#region Teams
+app.post('/uploadTeam', (req, res) => {
+    const sql = "INSERT INTO `teams`(`name`, `description`, `created`, `createdBy`) VALUES (?, ?, ?, ?)";
+    db.query(sql, [req.body.name, req.body.description, new Date(), "eesa"], (err, result) => {
+        if(err) {
+            console.error(err);
+            return res.json({Message: err});
+        }
+        return res.json({Status: result});
+    });   
+});
+
+
 app.get('/getTeams', (req, res) => {
     const sql = "select * from teams";
     db.query(sql, (err, result) => {

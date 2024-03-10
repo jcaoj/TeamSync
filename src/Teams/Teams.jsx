@@ -4,6 +4,7 @@ import TeamTable from "./TeamTable";
 import CreateTeamModal from './CreateTeamModal';
 import { Button, Title2 } from '@fluentui/react-components';
 import { AddSquare16Regular } from "@fluentui/react-icons";
+import axios from 'axios';
 
 export default function Teams() {
   const { currentPage, setCurrentPage, teams, setTeams } = useContext(Context);
@@ -11,15 +12,22 @@ export default function Teams() {
 
   useEffect(() => {
     setCurrentPage("teams");
-  }, [setCurrentPage]);
+  }, [setCurrentPage, setTeams]);
 
   const handleCreateTeam = (newTeam) => {
-    const updatedTeams = {
-      ...teams,
-      [newTeam.id]: { ...newTeam}
-    };
-    setTeams(updatedTeams);
-    setIsModalOpen(false);
+    
+    axios.post('http://localhost:8081/uploadTeam', newTeam)
+    .then(res => {
+      console.log(res);
+      const addedTeam = { ...newTeam, id: res.data.Status.insertId };
+      setTeams({ ...teams, [addedTeam.id]: addedTeam });
+    })
+    .catch(err => {
+      console.error(err);
+    });
+
+  setIsModalOpen(false);
+
   };
 
 
