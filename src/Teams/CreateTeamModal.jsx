@@ -8,7 +8,7 @@ export default function CreateTeamModal({ onCreate, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onCreate({ id: Date.now(), name: teamName, description });
+    onCreate({id: Date.now(), name: teamName, description: description});
   };
 
   return (

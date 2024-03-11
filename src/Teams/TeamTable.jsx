@@ -11,8 +11,12 @@ import {
   Button,
 } from '@fluentui/react-components';
 import { OpenRegular, EditRegular, DeleteRegular } from '@fluentui/react-icons';
+import {useNavigate } from "react-router-dom";
 
 export default function TeamTable({ teams = [] }) { 
+
+  const navigate = useNavigate();
+
   const columns = [
     createTableColumn({
       columnId: 'teamName',
@@ -31,7 +35,6 @@ export default function TeamTable({ teams = [] }) {
         <TableCellLayout
           media={
             <>
-              <Button icon={<OpenRegular />} title="Open">Open</Button>
               <Button aria-label="Edit" icon={<EditRegular />} title="Edit"/>
               <Button aria-label="Delete" icon={<DeleteRegular />} title="Delete"/>
             </>
@@ -58,7 +61,7 @@ export default function TeamTable({ teams = [] }) {
       </DataGridHeader>
       <DataGridBody>
         {({ item, rowId }) => (
-          <DataGridRow key={rowId}>
+          <DataGridRow key={rowId} onClick={() => navigate(`/viewTeam/${item.id}`)}>
             {({ renderCell, columnId }) => (
               <DataGridCell>
                 {renderCell(item)}
