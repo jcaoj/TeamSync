@@ -94,6 +94,16 @@ app.get('/getProjectById', (req, res) => {
         return res.json(result);
     })
 })
+
+app.get('/getProjectByUserId', (req, res) => {
+    const sql = "select * from projects where teamId in (select teamId from usersInTeam where userId=?)";
+    db.query(sql, [req.query.userId], (err, result) => {
+        if(err) return res.json({Message: err});
+        return res.json(result);
+    })
+})
+
+
 //#endregion
 
 //#region Teams
