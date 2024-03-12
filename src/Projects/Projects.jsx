@@ -19,7 +19,7 @@ import CreateButton from "./CreateButton";
 import { Context } from "../Context";
 import axios from 'axios';
 
-export default function Projects() {
+export default function Projects(props) {
   const { username, userId, currentPage, setCurrentPage, statuses, setStatuses, teams, setTeams } = useContext(Context);
   const [projects, setProjects] = useState([]);
   const [teamProjects, setTeamProjects] = useState([]);
@@ -27,11 +27,12 @@ export default function Projects() {
   const [projectsLoaded, setProjectsLoaded] = useState(false);
   const [teamsLoaded, setTeamsLoaded] = useState(false);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+  const [projectsUpdated, setProjectsUpdated] = useState(false);
 
   function createProject(project) {
     setProjects([...projects, project]);
     setIsProjectModalOpen(false);
-    axios.post(`http://localhost:8081/uploadProject?teamId=${project.teamId}&name=${project.name}&description=${project.description}&status=${project.status}`)
+    axios.post(`http://localhost:8081/uploadProject?teamId=${project.teamId}&name=${project.name}&description=${project.description}&status=${project.status}&username=${username}`)
       .then(res => console.log(res))
       .catch(err => console.log(err));
   }
@@ -41,6 +42,19 @@ export default function Projects() {
     axios.post(`http://localhost:8081/uploadPost?projectId=${post.image}&message=${post.message}`)
       .then(res => console.log(res))
       .catch(err => console.log(err));
+  }
+
+  function toggleFollow(project) {
+    if (project.followed == 1) {
+      axios.post(`http://localhost:8081/unfollowProject?userId=${userId}&projectId=${project.id}`)
+      .then(res => setProjectsUpdated(!projectsUpdated))
+      .catch(err => console.log(err));
+    }
+    else {
+      axios.post(`http://localhost:8081/followProject?userId=${userId}&projectId=${project.id}`)
+      .then(res => setProjectsUpdated(!projectsUpdated))
+      .catch(err => console.log(err));
+    }
   }
 
   function ProjectsList(props) {
@@ -53,7 +67,7 @@ export default function Projects() {
           props.list.length > 0 ? (
             <div className="grid">
               {props.list.map(project => (
-                <ProjectCard key={project.id} project={project} teams={teams}></ProjectCard>))}
+                <ProjectCard key={project.id} project={project} teams={teams} toggleFollow={toggleFollow}></ProjectCard> ))}
             </div>
           ) : (
             <div>
@@ -65,29 +79,35 @@ export default function Projects() {
     );
   }
 
-  function timeout(delay) {
-    return new Promise(res => setTimeout(res, delay));
-  }
-
   useEffect(() => {
     setCurrentPage("projects")
     axios.get(`http://localhost:8081/getProjectByUserId?userId=${userId}`)
       .then(res => {
-        setProjects(res.data)
-        setTeamProjects(res.data)
+        var followedProjects = [];
+        var teamProjects = [];
+        for (var i = 0; i < res.data.length; i++) {
+          if (res.data[i].followed == 1) {
+            followedProjects.push(res.data[i])
+          }
+          else {
+            teamProjects.push(res.data[i])
+          }
+        }
+        setProjects(followedProjects)
+        setTeamProjects(teamProjects)
         setProjectsLoaded(true)
       })
       .catch(err => console.log(err));
-  }, [])
+  }, [projectsUpdated])
 
   return (
     <>
       {projectsLoaded ? (
         <div className="page">
-          <ProjectsList title="My Projects" list={projects}
+          <ProjectsList title="My Projects" list={projects} 
             noProjectsText="You are not following any projects. Create a project or follow an existing project."></ProjectsList>
           <br />
-          <ProjectsList title="Team Projects" list={teamProjects}
+          <ProjectsList title="Team Projects" list={teamProjects} 
             noProjectsText="There are no projects in your teams that you aren't following."></ProjectsList>
           <br />
           <CreateButton setIsProjectModalOpen={setIsProjectModalOpen} setIsPostModalOpen={setIsPostModalOpen}></CreateButton>

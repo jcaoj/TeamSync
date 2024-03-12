@@ -14,3 +14,12 @@
     bottom: 2.5rem;
     right: 2rem;
 }
+
+.deleteButton {
+    display: inline;
+    padding-left: 10px;
+}
+
+.deleteButton Button {
+    color: red;
+}
