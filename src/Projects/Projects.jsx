@@ -84,11 +84,23 @@ export default function Projects() {
     <>
       {projectsLoaded ? (
         <div className="page">
-          <ProjectsList title="My Projects" list={projects}
-            noProjectsText="You are not following any projects. Create a project or follow an existing project."></ProjectsList>
+          <div className="title">
+            <Title2>My Projects</Title2>
+          </div>
+          <div className="grid">
+            {projects.map(project => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
           <br />
-          <ProjectsList title="Team Projects" list={teamProjects}
-            noProjectsText="There are no projects in your teams that you aren't following."></ProjectsList>
+          <div className="title">
+            <Title2>Team Projects</Title2>
+          </div>
+          <div className="grid">
+            {teamProjects.map(project => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
           <br />
           <CreateButton setIsProjectModalOpen={setIsProjectModalOpen} setIsPostModalOpen={setIsPostModalOpen}></CreateButton>
           <br />
@@ -100,7 +112,7 @@ export default function Projects() {
       )}
 
       {isProjectModalOpen && <CreateProjectModal onCreate={createProject} onClose={() => setIsProjectModalOpen(false)} />}
-      {isPostModalOpen && <CreatePostModal onCreate={createPost} onClose={() => setIsPostModalOpen(false)} />} {/* Render post modal */}
+      {isPostModalOpen && <CreatePostModal onCreate={createPost} onClose={() => setIsPostModalOpen(false)} />}
     </>
   );
 }

@@ -11,7 +11,8 @@ import {
   ToolbarButton,
   Toolbar,
   ToolbarGroup,
-  Spinner
+  Spinner,
+  Card
 } from "@fluentui/react-components";
 import {
   ArrowLeft24Regular,
@@ -87,7 +88,7 @@ export default function ViewProject(props) {
     })
     .catch(err => console.log(err));
   }, [projectEdited])
-
+ 
   return (
     <>
       {
@@ -119,7 +120,7 @@ export default function ViewProject(props) {
                   />
                 </ToolbarGroup>
               </Toolbar>
-
+             
               <div className="responsive-two-column-grid">
                 <div>
                   <div className="title">

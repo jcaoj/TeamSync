@@ -1,40 +1,60 @@
 import React from "react";
 import { useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Context } from "../Context";
+import "./ViewPost.css"
 import {
-    makeStyles,
-    Body1,
-    Caption1,
-    Button,
-    shorthands,
-    Text
-  } from "@fluentui/react-components";
-  import { ArrowReplyRegular, ShareRegular } from "@fluentui/react-icons";
-  import {
-    Card,
-    CardFooter,
-    CardHeader,
-    CardPreview,
-  } from "@fluentui/react-components";
+  makeStyles,
+  Body1Strong,
+  Caption1,
+  Subtitle2Stronger,
+  Button,
+  shorthands,
+  Text,
+  Card,
+  CardFooter,
+  CardHeader,
+  CardPreview,
+  Spinner
+} from "@fluentui/react-components";
 
-export default function ProjectCard(props) {
-    const styles = useStyles();
-    const [project, setProject] = useState(props.project);
-    const {statuses, setStatuses, teams, setTeams} = useContext(Context);
+const useStyles = makeStyles({
+  card: {
+    ...shorthands.margin("auto"),
+    width: "100%",
+    maxWidth: "100%",
+  },
+  text: {
+    ...shorthands.margin(0),
+  }
+});
 
-    return (
-      <>
-      <Card className={styles.card} onSelectionChange={()=>props.onProjectSelected(project)}>
+export default function PostCard({ post, project }) {
+  const styles = useStyles();
+  const { image, caption } = useContext(Context);
+  const [contextLoaded, setContextLoaded] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (image && caption) {
+      setContextLoaded(true)
+    }
+  }, [image, caption])
+
+  return (
+    <> {
+      contextLoaded ? (
+        <Card className={styles.card}>
         <CardHeader
-          header={
-            <Body1> <b>{project.name}</b> </Body1>
-          }
-          description={<Caption1>{teams[project.teamId].name}</Caption1>}
+          image={posts[post.image]}
+          description={<Body1Strong>{posts[post.caption]}</Body1Strong>}
         />
-  
-        <p className={styles.text}> {project.description} </p>
-        <p className={styles.text}> Imagine a second layered card here with a preview of the most recent post </p>
       </Card>
-      </>
-    );
+      ) : (
+        <Spinner/>
+      )
+    }
+    </>
+  );
 }
+
