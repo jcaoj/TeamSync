@@ -108,13 +108,32 @@ app.get('/getProjectByUserId', (req, res) => {
 
 //#region Teams
 app.post('/uploadTeam', (req, res) => {
-    const sql = "INSERT INTO `teams`(`name`, `description`, `created`, `createdBy`) VALUES (?, ?, ?, ?)";
-    db.query(sql, [req.body.name, req.body.description, new Date(), "eesa"], (err, result) => {
-        if(err) {
-            console.error(err);
-            return res.json({Message: err});
+    const { name, description, username, userIds } = req.body;
+    const sqlInsertTeam = "INSERT INTO `teams`(`name`, `description`, `created`, `createdBy`) VALUES (?, ?, ?, ?)";
+
+    db.query(sqlInsertTeam, [name, description, new Date(), username], (err, teamResult) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).json({ Message: "Error inserting team", err });
         }
-        return res.json({Status: result});
+
+        if (userIds && userIds.length > 0) {
+            const teamId = teamResult.insertId; 
+            const sqlAssignUsers = "INSERT INTO `usersInTeam`(`userId`, `teamId`) VALUES ?";
+            const usersValues = userIds.map(userId => [userId, teamId]);
+      
+            db.query(sqlAssignUsers, [usersValues], (assignErr, assignResult) => {
+              if (assignErr) {
+                console.error(assignErr);
+                return res.status(500).json({ Message: "Error assigning users to team", assignErr });
+              }
+      
+              res.json({ Status: "Team created and users assigned", teamId: teamId });
+            });
+        }   else {
+             res.json({ Status: "Team created", teamId: teamResult.insertId });
+            }
+
     });   
 });
 
@@ -134,6 +153,7 @@ app.get('/getTeamById', (req, res) => {
         return res.json(result);
     })
 })
+
 //#endregion
 
 //#region Statuses
@@ -162,6 +182,19 @@ app.get('/getUserByUsername', (req, res) => {
         return res.json(result);
     })
 })
+
+app.get('/getUsers', (req, res) => {
+    const sql = "SELECT * FROM users";
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error('Error fetching users:', err);
+            res.status(500).json({ message: 'Error fetching users', error: err });
+        } else {
+            res.json(results);
+        }
+    });
+});
+
 
 
 //#endregion

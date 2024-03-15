@@ -7,11 +7,22 @@ import { AddSquare16Regular } from "@fluentui/react-icons";
 import axios from 'axios';
 
 export default function Teams() {
-  const { currentPage, setCurrentPage, teams, setTeams } = useContext(Context);
+  const { setCurrentPage, teams, setTeams } = useContext(Context);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     setCurrentPage("teams");
+  
+    const fetchData = async () => {
+      try {
+        const teamResponse = await axios.get('http://localhost:8081/getTeams');
+        setTeams(teamResponse.data);
+      } catch (error) {
+        console.error('Failed to fetch data: ', error);
+      }
+    };
+  
+    fetchData();
   }, [setCurrentPage, setTeams]);
 
   const handleCreateTeam = (newTeam) => {

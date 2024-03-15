@@ -50,7 +50,7 @@ export default function TeamTable({ teams = [] }) {
       items={teams} 
       columns={columns}
       sortable
-      getRowId={(item) => item.id.toString()}
+      getRowId={(item) => item && item.id ? item.id.toString(): 'fallback-id'}
     >
       <DataGridHeader>
         <DataGridRow>
