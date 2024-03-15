@@ -104,7 +104,15 @@ app.get('/getProjectById', (req, res) => {
 })
 
 app.get('/getProjectByUserId', (req, res) => {
-    const sql = "SELECT p.id, p.teamId, p.name, p.description, p.status, p.created, p.createdBy, p.modified, p.modifiedBy, EXISTS(SELECT id FROM userFollowingProject WHERE userId=? and projectId=p.id) as followed FROM teamsync.projects as p where teamId in (select teamId from usersInTeam where userId=?);";
+    var sql = "SELECT p.id, p.teamId, p.name, p.description, p.status, p.created, p.createdBy, p.modified, p.modifiedBy, EXISTS(SELECT id FROM userFollowingProject WHERE userId=? and projectId=p.id) as followed FROM teamsync.projects as p where teamId in (select teamId from usersInTeam where userId=?) and ";
+
+    if (req.query.archived) {
+        sql += "status='ARCH';"
+    }
+    else {
+        sql += "NOT status='ARCH';"
+    }
+
     db.query(sql, [req.query.userId, req.query.userId], (err, result) => {
         if(err) return res.json({Message: err});
         return res.json(result);
