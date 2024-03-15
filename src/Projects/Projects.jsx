@@ -32,8 +32,13 @@ export default function Projects(props) {
   function createProject(project) {
     setProjects([...projects, project]);
     setIsProjectModalOpen(false);
-    axios.post(`http://localhost:8081/uploadProject?teamId=${project.teamId}&name=${project.name}&description=${project.description}&status=${project.status}&username=${username}`)
-      .then(res => console.log(res))
+    axios.post(`http://localhost:8081/uploadProject?teamId=${project.teamId}&name=${project.name}&description=${project.description}&status=${project.status}&username=${username}&userId=${userId}`)
+      .then(res => {
+        console.log(res)
+        axios.post(`http://localhost:8081/followProject?userId=${userId}&projectId=${res.data.Status.insertId}`)
+        .then(res => setProjectsUpdated(!projectsUpdated))
+        .catch(err => console.log(err));
+      })
       .catch(err => console.log(err));
   }
 
