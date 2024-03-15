@@ -97,7 +97,9 @@ export default function ProjectCard(props) {
           <p className={styles.text}> Imagine a second layered card here with a preview of the most recent post </p>
         </Card>
       ) : (
-        <Spinner />
+        <div className="spinnerContainer">
+          <Spinner />
+        </div>
       )
     }
     </>

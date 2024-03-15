@@ -113,7 +113,14 @@ export default function ViewProject(props) {
                   appearance="subtle"
                   size="small"
                   icon={<ArrowLeft24Regular />}
-                  onClick={() => navigate("/projects")}
+                  onClick={() => {
+                    if (viewProject.status == "ARCH") {
+                      navigate("/archivedProjects")
+                    }
+                    else {
+                      navigate("/projects")
+                    }
+                  }}
                 />
                 <ToolbarGroup>
                   <ToolbarButton
@@ -179,7 +186,9 @@ export default function ViewProject(props) {
               {isPostModalOpen && <CreatePostModal onCreate={createPost} onClose={() => setIsPostModalOpen(false)} />} {/* Render post modal */}
             </>
           ) : (
-            <Spinner />
+            <div className="spinnerContainer">
+               <Spinner />
+            </div>
           )}
         </div>
       }

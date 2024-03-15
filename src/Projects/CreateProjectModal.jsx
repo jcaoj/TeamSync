@@ -166,7 +166,10 @@ export default function CreateProjectModal({ onCreate, onClose, editProject = nu
                                 </div>
                             </form>
                         </>
-                    ) : (<Spinner />
+                    ) : (      
+                        <div className="spinnerContainer">
+                            <Spinner />
+                        </div>
                     )
                 }
             </div>
