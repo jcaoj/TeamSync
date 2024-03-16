@@ -139,8 +139,8 @@ app.post('/uploadTeam', (req, res) => {
 
 
 app.get('/getTeams', (req, res) => {
-    const sql = "select * from teams";
-    db.query(sql, (err, result) => {
+    const sql = "select * from teams where id in (select teamId from usersInTeam where userId=?)";
+    db.query(sql, [req.query.userId], (err, result) => {
         if(err) return res.json({Message: err});
         return res.json(result);
     })
