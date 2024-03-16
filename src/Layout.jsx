@@ -43,7 +43,7 @@ const useStyles = makeStyles({
         marginBottom: "8px"
     },
     avatar: {
-        right: "10px",
+        right: "20px",
         top: "15px",
         position: "absolute"
     },
@@ -69,6 +69,10 @@ export default function Layout() {
         localStorage.removeItem("username")
         localStorage.removeItem("userId")
         navigate("/login");
+    }
+
+    function goToArchivedProjects() {
+        navigate("/archivedProjects");
     }
 
     function formatStatuses(statusesJSON) {
@@ -144,7 +148,7 @@ export default function Layout() {
                                     <Subtitle2 className={styles.username}>{username}</Subtitle2>
                                     <br/><br/>
                                     <MenuList>
-                                        <MenuItem>View Archived Projects</MenuItem>
+                                        <MenuItem onClick={goToArchivedProjects}>Archived Projects</MenuItem>
                                         <MenuItem onClick={sendToLogin}>Log Out</MenuItem>
                                     </MenuList>
                                 </MenuPopover>
