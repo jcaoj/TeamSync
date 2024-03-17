@@ -4,22 +4,41 @@ import TeamTable from "./TeamTable";
 import CreateTeamModal from './CreateTeamModal';
 import { Button, Title2 } from '@fluentui/react-components';
 import { AddSquare16Regular } from "@fluentui/react-icons";
+import axios from 'axios';
 
 export default function Teams() {
-  const { currentPage, setCurrentPage, teams, setTeams } = useContext(Context);
+  const { setCurrentPage, userId, teams, setTeams } = useContext(Context);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     setCurrentPage("teams");
-  }, [setCurrentPage]);
+  
+    const fetchData = async () => {
+      try {
+        const teamResponse = await axios.get(`http://localhost:8081/getTeams?userId=${userId}`);
+        setTeams(teamResponse.data);
+      } catch (error) {
+        console.error('Failed to fetch data: ', error);
+      }
+    };
+  
+    fetchData();
+  }, [setCurrentPage, setTeams]);
 
   const handleCreateTeam = (newTeam) => {
-    const updatedTeams = {
-      ...teams,
-      [newTeam.id]: { ...newTeam}
-    };
-    setTeams(updatedTeams);
-    setIsModalOpen(false);
+    
+    axios.post('http://localhost:8081/uploadTeam', newTeam)
+    .then(res => {
+      console.log(res);
+      const addedTeam = { ...newTeam, id: res.data.Status.insertId };
+      setTeams({ ...teams, [addedTeam.id]: addedTeam });
+    })
+    .catch(err => {
+      console.error(err);
+    });
+
+  setIsModalOpen(false);
+
   };
 
 

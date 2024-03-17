@@ -30,7 +30,7 @@ import CreateProjectModal from "./CreateProjectModal";
 import axios from 'axios';
 
 export default function ViewProject(props) {
-  const { currentPage, setCurrentPage, statuses, setStatuses } = useContext(Context);
+  const { username, userId, currentPage, setCurrentPage, statuses, setStatuses } = useContext(Context);
   const { id } = useParams();
   const navigate = useNavigate();
   const [viewProject, setViewProject] = useState();
@@ -51,7 +51,7 @@ export default function ViewProject(props) {
     setIsEditProject(false)
 
     if (props.isEditProject) {
-      axios.post(`http://localhost:8081/editProject?id=${id}&teamId=${props.teamId}&name=${props.name}&description=${props.description}&status=${props.status}`)
+      axios.post(`http://localhost:8081/editProject?id=${id}&teamId=${props.teamId}&name=${props.name}&description=${props.description}&status=${props.status}&username=${username}`)
       .then(res =>  {
         console.log(res) 
         setProjectEdited(!projectEdited)
@@ -59,8 +59,26 @@ export default function ViewProject(props) {
       .catch(err => console.log(err));
     }
     else {
-      axios.post(`http://localhost:8081/uploadProject?teamId=${props.teamId}&name=${props.name}&description=${props.description}&status=${props.status}`)
-      .then(res => console.log(res))
+      axios.post(`http://localhost:8081/uploadProject?teamId=${props.teamId}&name=${props.name}&description=${props.description}&status=${props.status}&userId=${userId}`)
+      .then(res =>  {
+        console.log(res)
+        axios.post(`http://localhost:8081/followProject?userId=${userId}&projectId=${res.data.Status.insertId}`)
+        .then(res => console.log(res))
+        .catch(err => console.log(err));
+      })
+      .catch(err => console.log(err));
+    }
+  }
+
+  function toggleFollow() {
+    if (viewProject.followed == 1) {
+      axios.post(`http://localhost:8081/unfollowProject?userId=${userId}&projectId=${id}`)
+      .then(res => setProjectEdited(!projectEdited))
+      .catch(err => console.log(err));
+    }
+    else {
+      axios.post(`http://localhost:8081/followProject?userId=${userId}&projectId=${id}`)
+      .then(res => setProjectEdited(!projectEdited))
       .catch(err => console.log(err));
     }
   }
@@ -74,7 +92,7 @@ export default function ViewProject(props) {
 
   useEffect(() => {
     setCurrentPage("projects")
-    axios.get(`http://localhost:8081/getProjectById?projectId=${id}`)
+    axios.get(`http://localhost:8081/getProjectById?userId=${userId}&projectId=${id}`)
     .then(res => {
       setViewProject(res.data[0])
       
@@ -101,13 +119,21 @@ export default function ViewProject(props) {
                   appearance="subtle"
                   size="small"
                   icon={<ArrowLeft24Regular />}
-                  onClick={() => navigate("/projects")}
+                  onClick={() => {
+                    if (viewProject.status == "ARCH") {
+                      navigate("/archivedProjects")
+                    }
+                    else {
+                      navigate("/projects")
+                    }
+                  }}
                 />
                 <ToolbarGroup>
                   <ToolbarButton
                     aria-label="Follow Project"
                     appearance="subtle"
-                    icon={<Eye24Regular />}
+                    icon={viewProject.followed == 1 ? (<Eye24Filled/>) : (<Eye24Regular />)}
+                    onClick={toggleFollow}
                   />
                   <ToolbarButton
                     aria-label="Edit Project"
@@ -169,7 +195,9 @@ export default function ViewProject(props) {
               {isPostModalOpen && <CreatePostModal onCreate={createPost} onClose={() => setIsPostModalOpen(false)} />} {/* Render post modal */}
             </>
           ) : (
-            <Spinner />
+            <div className="spinnerContainer">
+               <Spinner />
+            </div>
           )}
         </div>
       }
