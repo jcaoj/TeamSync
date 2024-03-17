@@ -41,6 +41,9 @@
   padding: 1rem 2rem;
 }
 
-Spinner {
-  margin: auto;
+.spinnerContainer {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

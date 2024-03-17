@@ -1,14 +1,45 @@
-import React, { useState } from 'react';
-import { Button, Textarea, Title2, Label, Input } from '@fluentui/react-components';
+import React, { useContext, useState, useEffect } from 'react';
+import { Button, Textarea, Title2, Label, Input, Checkbox } from '@fluentui/react-components';
 import '../Modal.css'; 
-
+import { Context } from '../Context';
+import axios from 'axios';
 export default function CreateTeamModal({ onCreate, onClose }) {
+  
+  const {users, setUsers, userId, username} = useContext(Context);
   const [teamName, setTeamName] = useState('');
   const [description, setDescription] = useState('');
+  const [selectedUsers, setSelectedUsers] = useState(new Set(userId.toString())); //automatically include logged-in user in the team
+
+  useEffect(() => {
+    axios.get('http://localhost:8081/getUsers')
+      .then(response => {
+        const filteredUsers = response.data.filter(user => user.id.toString() !== userId.toString()); //filter out logged-in user from list
+        setUsers(filteredUsers);
+        console.log('Filtered Users:', filteredUsers);
+      })
+      .catch(error => {
+        console.error('Failed to fetch users:', error);
+      });
+  }, [setUsers, userId]);
+
+  const handleUserSelectionChange = (userId, checked) => {
+    setSelectedUsers(prevSelectedUsers => {
+      const newSelectedUsers = new Set(prevSelectedUsers);
+      const userIdStr = userId.toString();
+      if (checked) {
+        newSelectedUsers.add(userIdStr);
+      } else {
+        newSelectedUsers.delete(userIdStr);
+      }
+      return newSelectedUsers;
+    });
+  };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onCreate({ id: Date.now(), name: teamName, description });
+    const userIdsArray = Array.from(selectedUsers).map(id=>parseInt(id, 10));
+    onCreate({ id: Date.now(), name: teamName, description, username, userIds: userIdsArray });
   };
 
   return (
@@ -39,7 +70,18 @@ export default function CreateTeamModal({ onCreate, onClose }) {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
-          />
+          /><br/><br/>
+          <Label htmlFor= "selectMembers" size="large">Select Members</Label>
+          <div className="scrollable-list" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+            {users.map(user => (
+              <Checkbox
+                key={user.id}
+                label={user.username}
+                checked={selectedUsers.has(user.id.toString())}
+                onChange={(e, data) => handleUserSelectionChange(user.id, data.checked)}
+              />
+            ))}
+          </div>
           <div className="buttonGroup">
             <Button onClick={onClose}>Close</Button>
             <Button appearance="primary" type="submit">Create</Button>
