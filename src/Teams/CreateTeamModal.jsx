@@ -1,11 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Button, Textarea, Title2, Label, Input, Checkbox } from '@fluentui/react-components';
-import '../Modal.css'; 
+import { Button, Textarea, Title2, Label, Input, Checkbox, Dropdown, Option } from '@fluentui/react-components';
+import '../Modal.css';
 import { Context } from '../Context';
 import axios from 'axios';
 export default function CreateTeamModal({ onCreate, onClose }) {
-  
-  const {users, setUsers, userId, username} = useContext(Context);
+
+  const { users, setUsers, userId, username } = useContext(Context);
   const [teamName, setTeamName] = useState('');
   const [description, setDescription] = useState('');
   const [selectedUsers, setSelectedUsers] = useState(new Set(userId.toString())); //automatically include logged-in user in the team
@@ -31,6 +31,7 @@ export default function CreateTeamModal({ onCreate, onClose }) {
       } else {
         newSelectedUsers.delete(userIdStr);
       }
+      console.log(newSelectedUsers)
       return newSelectedUsers;
     });
   };
@@ -38,7 +39,7 @@ export default function CreateTeamModal({ onCreate, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const userIdsArray = Array.from(selectedUsers).map(id=>parseInt(id, 10));
+    const userIdsArray = Array.from(selectedUsers).map(id => parseInt(id, 10));
     onCreate({ id: Date.now(), name: teamName, description, username, userIds: userIdsArray });
   };
 
@@ -70,9 +71,22 @@ export default function CreateTeamModal({ onCreate, onClose }) {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
-          /><br/><br/>
-          <Label htmlFor= "selectMembers" size="large">Select Members</Label>
-          <div className="scrollable-list" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+          /><br /><br />
+          <Label htmlFor="selectMembers" size="large">Select Members</Label>
+          <Dropdown
+            aria-labelledby="members"
+            multiselect={true}
+            className='input'
+            placeholder="Select members"
+            onOptionSelect={(e, data) => handleUserSelectionChange(data.optionValue, true)}
+          >
+            {users.map((option) => (
+              <Option key={option.id} value={option.id}>
+                {option.username}
+              </Option>
+            ))}
+          </Dropdown>
+          {/* <div className="scrollable-list" style={{ maxHeight: '200px', overflowY: 'auto' }}>
             {users.map(user => (
               <Checkbox
                 key={user.id}
@@ -81,7 +95,7 @@ export default function CreateTeamModal({ onCreate, onClose }) {
                 onChange={(e, data) => handleUserSelectionChange(user.id, data.checked)}
               />
             ))}
-          </div>
+          </div> */}
           <div className="buttonGroup">
             <Button onClick={onClose}>Close</Button>
             <Button appearance="primary" type="submit">Create</Button>

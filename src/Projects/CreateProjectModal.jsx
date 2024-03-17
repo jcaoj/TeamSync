@@ -56,6 +56,8 @@ export default function CreateProjectModal({ onCreate, onClose, editProject = nu
             setProjectLoaded(true)
         }
         else {
+            setStatus("ACT")
+            setStatusDescription("Active")
             setProjectLoaded(true)
         }
 

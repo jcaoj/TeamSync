@@ -59,8 +59,13 @@ export default function ViewProject(props) {
       .catch(err => console.log(err));
     }
     else {
-      axios.post(`http://localhost:8081/uploadProject?teamId=${props.teamId}&name=${props.name}&description=${props.description}&status=${props.status}`)
-      .then(res => console.log(res))
+      axios.post(`http://localhost:8081/uploadProject?teamId=${props.teamId}&name=${props.name}&description=${props.description}&status=${props.status}&userId=${userId}`)
+      .then(res =>  {
+        console.log(res)
+        axios.post(`http://localhost:8081/followProject?userId=${userId}&projectId=${res.data.Status.insertId}`)
+        .then(res => console.log(res))
+        .catch(err => console.log(err));
+      })
       .catch(err => console.log(err));
     }
   }

@@ -7,7 +7,7 @@ import { AddSquare16Regular } from "@fluentui/react-icons";
 import axios from 'axios';
 
 export default function Teams() {
-  const { setCurrentPage, teams, setTeams } = useContext(Context);
+  const { setCurrentPage, userId, teams, setTeams } = useContext(Context);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -15,7 +15,7 @@ export default function Teams() {
   
     const fetchData = async () => {
       try {
-        const teamResponse = await axios.get('http://localhost:8081/getTeams');
+        const teamResponse = await axios.get(`http://localhost:8081/getTeams?userId=${userId}`);
         setTeams(teamResponse.data);
       } catch (error) {
         console.error('Failed to fetch data: ', error);
