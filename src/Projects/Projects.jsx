@@ -127,7 +127,7 @@ export default function Projects(props) {
       )}
 
       {isProjectModalOpen && <CreateProjectModal onCreate={createProject} onClose={() => setIsProjectModalOpen(false)} />}
-      {isPostModalOpen && <CreatePostModal onCreate={createPost} onClose={() => setIsPostModalOpen(false)} />}
+      {isPostModalOpen && <CreatePostModal onClose={() => setIsPostModalOpen(false)} />}
     </>
   );
 }

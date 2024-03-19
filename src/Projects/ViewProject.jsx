@@ -85,13 +85,6 @@ export default function ViewProject(props) {
     }
   }
 
-  function createPost(props) {
-    setIsPostModalOpen(false);
-    axios.post(`http://localhost:8081/uploadPost?projectId=${id}&title=${props.title}&caption=${props.caption}`, props.formdata)
-      .then(res => console.log(res))
-      .catch(err => console.log(err));
-  }
-
   useEffect(() => {
     setCurrentPage("projects")
     axios.get(`http://localhost:8081/getProjectById?userId=${userId}&projectId=${id}`)
@@ -165,9 +158,6 @@ export default function ViewProject(props) {
                     <Button appearance="primary"onClick={() => setIsPostModalOpen(true)}>
                       Create Post
                     </Button>
-                    {isPostModalOpen && (
-                      <CreatePostModal onCreate={createPost} onClose={() => setIsPostModalOpen(false)} />
-                    )}
                   </div>
                 </div>
                 <div>
@@ -206,7 +196,7 @@ export default function ViewProject(props) {
               </div>
               <CreateButton setIsProjectModalOpen={setIsProjectModalOpen} setIsPostModalOpen={setIsPostModalOpen}></CreateButton>
               {isProjectModalOpen && <CreateProjectModal onCreate={createProject} onClose={closeProjectModal} editProject={isEditProject ? viewProject : null}/>}
-              {isPostModalOpen && <CreatePostModal onCreate={createPost} onClose={() => setIsPostModalOpen(false)} />}
+              {isPostModalOpen && <CreatePostModal onClose={() => setIsPostModalOpen(false)} existingProjectId={id} existingProjectName={viewProject.name} />}
             </>
           ) : (
             <div className="spinnerContainer">

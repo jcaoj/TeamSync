@@ -115,7 +115,7 @@ export default function Layout() {
             .then(res => formatTeams(res.data))
             .catch(err => console.log(err));
 
-        axios.get("http://localhost:8081/getProjects")
+        axios.get(`http://localhost:8081/getProjectByUserId?userId=${userId}`)
             .then(res => formatProjects(res.data))
             .catch(err => console.log(err));
     }, [])

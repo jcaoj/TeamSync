@@ -5,17 +5,18 @@ import axios from 'axios';
 import { Button, Textarea, Title2, Input, Label, Dropdown, Option } from '@fluentui/react-components';
 import { Context } from "../Context";
 
-export default function CreatePostModal({ onCreate, onClose }) {
+export default function CreatePostModal({ onClose, existingProjectId = null, existingProjectName = null }) {
   const [files, setFiles] = useState();
   const [previews, setPreviews] = useState();
   const [caption, setCaption] = useState();
   const [title, setTitle] = useState();
-  const [projectName, setProjectName] = useState('');
+  const [projectId, setProjectId] = useState(existingProjectId);
+  const [projectName, setProjectName] = useState(existingProjectName);
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState('');
 
   const [projectsArray, setProjectsArray] = useState([]);
-  const { statuses, setStatuses, projects } = useContext(Context);
+  const { userId, statuses, setStatuses, projects } = useContext(Context);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -29,16 +30,22 @@ export default function CreatePostModal({ onCreate, onClose }) {
       formdata.append('image', files[i]);
     }
 
-    onCreate({ title: title, caption: caption, formdata: formdata });
+    axios.post(`http://localhost:8081/uploadPost?projectId=${projectId}&title=${title}&caption=${caption}`, formdata)
+      .then(res => console.log(res))
+      .catch(err => console.log(err));
+
+    onClose();
   };
 
   useEffect(() => {
     var formatted = [];
+    console.log(projectId)
+    console.log(projectName)
     Object.keys(projects).forEach(function (key) {
       formatted.push([projects[key].id, projects[key].name]);
     });
     setProjectsArray(formatted);
-  }, [projects])
+  }, [])
 
   // rendering previews
   useEffect(() => {
@@ -58,13 +65,6 @@ export default function CreatePostModal({ onCreate, onClose }) {
     };
   }, [files]);
 
-  const isExistingProject = true;
-  const existingProject = {
-    name: "Project Name",
-    team: "Project Team",
-    description: "Project Description",
-  };
-
   return (
     <div className="modal">
       <div className="modal-content">
@@ -79,7 +79,9 @@ export default function CreatePostModal({ onCreate, onClose }) {
             aria-labelledby="project"
             placeholder="Select a project"
             className="input"
-            onOptionSelect={(e, data) => setProjectName(data.optionValue[1])}>
+            defaultValue={projectName}
+            defaultSelectedOptions={[projectId]}
+            onOptionSelect={(e, data) => setProjectId(data.optionValue)}>
             {projectsArray.map((option) => (
               <Option key={option} value={option[0]}>
                 {option[1]}
