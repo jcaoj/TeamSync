@@ -19,7 +19,7 @@ import CreateButton from "./CreateButton";
 import { Context } from "../Context";
 import axios from 'axios';
 
-export default function Projects(props) {
+export default function ArchivedProjects(props) {
   const { username, userId, currentPage, setCurrentPage, statuses, setStatuses, teams, setTeams } = useContext(Context);
   const [projects, setProjects] = useState([]);
   const [teamProjects, setTeamProjects] = useState([]);
@@ -32,13 +32,8 @@ export default function Projects(props) {
   function createProject(project) {
     setProjects([...projects, project]);
     setIsProjectModalOpen(false);
-    axios.post(`http://localhost:8081/uploadProject?teamId=${project.teamId}&name=${project.name}&description=${project.description}&status=${project.status}&username=${username}&userId=${userId}`)
-      .then(res => {
-        console.log(res)
-        axios.post(`http://localhost:8081/followProject?userId=${userId}&projectId=${res.data.Status.insertId}`)
-        .then(res => setProjectsUpdated(!projectsUpdated))
-        .catch(err => console.log(err));
-      })
+    axios.post(`http://localhost:8081/uploadProject?teamId=${project.teamId}&name=${project.name}&description=${project.description}&status=${project.status}&username=${username}`)
+      .then(res => console.log(res))
       .catch(err => console.log(err));
   }
 
@@ -86,7 +81,7 @@ export default function Projects(props) {
 
   useEffect(() => {
     setCurrentPage("projects")
-    axios.get(`http://localhost:8081/getProjectByUserId?userId=${userId}`)
+    axios.get(`http://localhost:8081/getProjectByUserId?userId=${userId}&archived=${true}`)
       .then(res => {
         var followedProjects = [];
         var teamProjects = [];
@@ -109,11 +104,11 @@ export default function Projects(props) {
     <>
       {projectsLoaded ? (
         <div className="page">
-          <ProjectsList title="My Projects" list={projects} 
-            noProjectsText="You are not following any projects. Create a project or follow an existing project."></ProjectsList>
+          <ProjectsList title="My Archived Projects" list={projects} 
+            noProjectsText="You are not following any archived projects."></ProjectsList>
           <br />
-          <ProjectsList title="Team Projects" list={teamProjects} 
-            noProjectsText="There are no projects in your teams that you aren't following."></ProjectsList>
+          <ProjectsList title="Team Archived Projects" list={teamProjects} 
+            noProjectsText="There are no archived projects in your teams that you aren't following."></ProjectsList>
           <br />
           <CreateButton setIsProjectModalOpen={setIsProjectModalOpen} setIsPostModalOpen={setIsPostModalOpen}></CreateButton>
           <br />
@@ -127,7 +122,7 @@ export default function Projects(props) {
       )}
 
       {isProjectModalOpen && <CreateProjectModal onCreate={createProject} onClose={() => setIsProjectModalOpen(false)} />}
-      {isPostModalOpen && <CreatePostModal onCreate={createPost} onClose={() => setIsPostModalOpen(false)} />}
+      {isPostModalOpen && <CreatePostModal onCreate={createPost} onClose={() => setIsPostModalOpen(false)} />} {/* Render post modal */}
     </>
   );
 }

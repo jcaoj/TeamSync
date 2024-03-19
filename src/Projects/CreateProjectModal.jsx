@@ -1,14 +1,23 @@
 import React, { useState, useContext, useEffect } from 'react';
 import "./Projects.css";
 import "../Modal.css";
-import { Button, Textarea, Title2, Input, Label, Dropdown, Option, Spinner } from '@fluentui/react-components';
+import {
+    Button, Textarea, Title2, Input, Label, Dropdown, Option, Spinner,
+    Dialog,
+    DialogTrigger,
+    DialogSurface,
+    DialogTitle,
+    DialogContent,
+    DialogBody,
+    DialogActions,
+} from '@fluentui/react-components';
 import { Context } from "../Context";
-const options = [
-    [1, "Cat"],
-    [2, "Caterpillar"],
-    [3, "Corgi"]
-];
-export default function CreateProjectModal({ onCreate, onClose, editProject = null}) {
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+export default function CreateProjectModal({ onCreate, onClose, editProject = null }) {
+    const navigate = useNavigate();
+
     const [projectName, setProjectName] = useState('');
     const [description, setDescription] = useState('');
     const [selectedTeam, setSelectedTeam] = useState('');
@@ -27,6 +36,14 @@ export default function CreateProjectModal({ onCreate, onClose, editProject = nu
         onCreate({ isEditProject: isEditProject, name: projectName, description: description, teamId: selectedTeam, status: status });
     }
 
+    function deleteProject() {
+        axios.post(`http://localhost:8081/deleteProject?projectId=${editProject.id}`)
+        .then(res => {
+            navigate("/projects")
+        })
+        .catch(err => console.log(err));
+    }
+
     useEffect(() => {
         if (editProject !== null) {
             setProjectName(editProject.name)
@@ -39,6 +56,8 @@ export default function CreateProjectModal({ onCreate, onClose, editProject = nu
             setProjectLoaded(true)
         }
         else {
+            setStatus("ACT")
+            setStatusDescription("Active")
             setProjectLoaded(true)
         }
 
@@ -118,14 +137,43 @@ export default function CreateProjectModal({ onCreate, onClose, editProject = nu
                                     required
                                 />
                                 <div className="buttonGroup">
-                                    <Button onClick={onClose}>Close</Button>
+                                    <div>
+                                        <Button onClick={onClose}>Close</Button>
+                                        {isEditProject ? (
+                                            <Dialog modalType="alert">
+                                                <DialogTrigger disableButtonEnhancement>
+                                                    <div className="deleteButton">
+                                                    <Button className="deleteButton">Delete</Button>
+                                                    </div>
+                                                </DialogTrigger>
+                                                <DialogSurface>
+                                                    <DialogBody>
+                                                        <DialogTitle>Delete {projectName}?</DialogTitle>
+                                                        <DialogContent>
+                                                            This will permanently delete the project. This action is irreversible. 
+                                                        </DialogContent>
+                                                        <DialogActions>
+                                                            <DialogTrigger disableButtonEnhancement>
+                                                                <Button appearance="secondary">Close</Button>
+                                                            </DialogTrigger>
+                                                            <Button onClick={deleteProject} appearance="primary">Delete</Button>
+                                                        </DialogActions>
+                                                    </DialogBody>
+                                                </DialogSurface>
+                                            </Dialog>
+                                       ) :
+                                            (<></>)}
+                                    </div>
                                     <Button appearance="primary" type="submit">{isEditProject ? "Edit" : "Create"}</Button>
                                 </div>
                             </form>
                         </>
-                    ) : ( <Spinner/>
-                        )
-            }
+                    ) : (      
+                        <div className="spinnerContainer">
+                            <Spinner />
+                        </div>
+                    )
+                }
             </div>
         </div>
     );
