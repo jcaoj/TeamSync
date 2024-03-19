@@ -40,7 +40,7 @@ app.post('/uploadPost', upload.array('image'), (req, res) => {
     const postSql = "INSERT INTO `posts`(`projectId`, `title`, `caption`, `created`) VALUES (?, ?, ?, ?)";
     const imageSql = "INSERT INTO `imagesInPost`(`postId`, `image`, `caption`) VALUES (?, ?, ?)";
 
-    db.query(postSql, [req.query.projectId, req.query.testPost, req.query.testCaption, new Date()], (err, result) => {
+    db.query(postSql, [req.query.projectId, req.query.title, req.query.caption, new Date()], (err, result) => {
         if(err) return res.json({Message: err});
 
         // Upload images using postId from first query

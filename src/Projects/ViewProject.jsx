@@ -85,9 +85,9 @@ export default function ViewProject(props) {
     }
   }
 
-  function createPost(post, formdata) {
+  function createPost(props) {
     setIsPostModalOpen(false);
-    axios.post(`http://localhost:8081/uploadPost?projectId=${id}&title=${props.testPost}&caption=${props.testCaption}`, formdata)
+    axios.post(`http://localhost:8081/uploadPost?projectId=${id}&title=${props.title}&caption=${props.caption}`, props.formdata)
       .then(res => console.log(res))
       .catch(err => console.log(err));
   }
