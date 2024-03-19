@@ -37,6 +37,7 @@ export default function ViewProject(props) {
   const [viewProject, setViewProject] = useState();
   const [team, setTeam] = useState();
   const [posts, setPosts] = useState([]);
+  const [postsLoaded, setPostsLoaded] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [isEditProject, setIsEditProject] = useState(false);
@@ -84,30 +85,35 @@ export default function ViewProject(props) {
       .catch(err => console.log(err));
     }
   }
-
-  function viewPosts(props) {
-    return (
+//<img src={`http://localhost:8081/images/${post.image}`} alt={`Post ${post.id}`} className="post-image" />
+function viewPosts() {
+  return (
+    <>
+     {projectLoaded ? (
       <>
-        {props.list.length > 0 && (
-          <div className="title">
-            <Title2>{props.title}</Title2>
-          </div>
-        )}
-        {props.list.length > 0 ? (
+        <div className="title">
+          <Title2>Posts</Title2>
+        </div>
+        {posts.length > 0 && (
           <div className="grid">
-            {props.list.map(post => (
-              <div key={post.id} className="post-card">
-                <img src={`http://localhost:8081/images/${post.image}`} alt={`Post ${post.id}`} className="post-image" />
-                <p className="post-caption">{post.caption}</p>
-              </div>
+            {posts.map(post => (
+              <PostCard key={post.id} image={post.image} caption={post.caption}></PostCard>
             ))}
           </div>
-        ) : (
-          <Text align="center">{props.noPostsText}</Text>
+        )}
+        {posts.length === 0 && (
+          <Text align="center">There are no posts yet</Text>
         )}
       </>
-    );
-  }
+     ) : (
+      <div className="spinnerContainer">
+        <Spinner />
+      </div>
+    )}
+  </>
+  );
+}
+
 
   useEffect(() => {
     setCurrentPage("projects")
@@ -213,14 +219,14 @@ export default function ViewProject(props) {
                   <Text>{viewProject.modified ? (`${String(viewProject.modified).replace("T", " ").slice(0, -5)} by ${viewProject.modifiedBy}`) : ("N/A")} </Text>
                 </div>
               </div>
-              <div className="postCardContainer">
-                {posts.map(post => (
-                  <PostCard key={post.id} post={post} />
-                ))}
-              </div>
+            
+              viewPosts?(
+                <viewPosts list={posts} noPostsText="There are no posts yet"></viewPosts>
+              )
+              
               <CreateButton setIsProjectModalOpen={setIsProjectModalOpen} setIsPostModalOpen={setIsPostModalOpen}></CreateButton>
               {isProjectModalOpen && <CreateProjectModal onCreate={createProject} onClose={closeProjectModal} editProject={isEditProject ? viewProject : null}/>}
-              {isPostModalOpen && <CreatePostModal onClose={() => setIsPostModalOpen(false)} existingProjectId={id} existingProjectName={viewProject.name} />}
+              {isPostModalOpen && <CreatePostModal onClick={createPost} onClose={() => setIsPostModalOpen(false)} />}
             </>
           ) : (
             <div className="spinnerContainer">
