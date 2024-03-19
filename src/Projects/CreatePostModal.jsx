@@ -39,8 +39,6 @@ export default function CreatePostModal({ onClose, existingProjectId = null, exi
 
   useEffect(() => {
     var formatted = [];
-    console.log(projectId)
-    console.log(projectName)
     Object.keys(projects).forEach(function (key) {
       formatted.push([projects[key].id, projects[key].name]);
     });
