@@ -29,7 +29,7 @@ const useStyles = makeStyles({
   }
 });
 
-export default function PostCard({ post, project }) {
+export default function PostCard({ post, posts }) {
   const styles = useStyles();
   const { image, caption } = useContext(Context);
   const [contextLoaded, setContextLoaded] = useState(false);
@@ -45,11 +45,11 @@ export default function PostCard({ post, project }) {
     <> {
       contextLoaded ? (
         <Card className={styles.card}>
-        <CardHeader
-          image={posts[post.image]}
-          description={<Body1Strong>{posts[post.caption]}</Body1Strong>}
-        />
-      </Card>
+          <CardHeader
+            image={posts[post.image]} 
+            description={<Body1Strong>{post.caption}</Body1Strong>}
+          />
+        </Card>
       ) : (
         <Spinner/>
       )

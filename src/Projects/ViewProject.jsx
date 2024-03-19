@@ -28,6 +28,7 @@ import CreateButton from "./CreateButton";
 import CreatePostModal from "./CreatePostModal";
 import CreateProjectModal from "./CreateProjectModal";
 import axios from 'axios';
+import PostCard from "./PostsCard";
 
 export default function ViewProject(props) {
   const { currentPage, setCurrentPage, statuses, setStatuses } = useContext(Context);
@@ -35,6 +36,7 @@ export default function ViewProject(props) {
   const navigate = useNavigate();
   const [viewProject, setViewProject] = useState();
   const [team, setTeam] = useState();
+  const [posts, setPosts] = useState([]);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [isEditProject, setIsEditProject] = useState(false);
@@ -67,7 +69,7 @@ export default function ViewProject(props) {
 
   function createPost(post) {
     setIsPostModalOpen(false);
-    axios.post(`http://localhost:8081/uploadPost?projectId=${post.image}&message=${post.message}`)
+    axios.post(`http://localhost:8081/uploadPost?projectId=${id}&message=${post.message}`)
       .then(res => console.log(res))
       .catch(err => console.log(err));
   }
@@ -87,7 +89,14 @@ export default function ViewProject(props) {
 
     })
     .catch(err => console.log(err));
-  }, [projectEdited])
+     // get posts related to the project
+     axios.get(`http://localhost:8081/getPostsByProjectId?projectId=${id}`)
+     .then(res => {
+       setPosts(res.data);
+     })
+     .catch(err => console.log(err));
+  }, [projectEdited]);
+
  
   return (
     <>
@@ -164,9 +173,14 @@ export default function ViewProject(props) {
                   <Text>{viewProject.modified ? (`${String(viewProject.modified).replace("T", " ").slice(0, -5)} by ${viewProject.modifiedBy}`) : ("N/A")} </Text>
                 </div>
               </div>
+              <div className="postCardContainer">
+                {posts.map(post => (
+                  <PostCard key={post.id} post={post} />
+                ))}
+              </div>
               <CreateButton setIsProjectModalOpen={setIsProjectModalOpen} setIsPostModalOpen={setIsPostModalOpen}></CreateButton>
               {isProjectModalOpen && <CreateProjectModal onCreate={createProject} onClose={closeProjectModal} editProject={isEditProject ? viewProject : null}/>}
-              {isPostModalOpen && <CreatePostModal onCreate={createPost} onClose={() => setIsPostModalOpen(false)} />} {/* Render post modal */}
+              {isPostModalOpen && <CreatePostModal onCreate={createPost} onClose={() => setIsPostModalOpen(false)} />}
             </>
           ) : (
             <Spinner />

@@ -6,26 +6,30 @@ import './Posts.css';
 export default function Posts(props) {
   const [files, setFiles] = useState();
   const [previews, setPreviews] = useState();
-  const [message, setMessage] = useState([]);
+  const [message, setMessage] = useState("");
 
   const handleFile = (e) => {
-    setFiles(e.target.files[0]);
+    setFiles(e.target.files);
   }
+
   const handleUpload = () => {
     const formdata = new FormData();
-    for (let i=0; i < files.length; i++) {
-      console.log(files[i]);
-      formdata.append('image', files[i]);
+
+    if (files) {
+      for (let i = 0; i < files.length; i++) {
+        formdata.append('image', files[i]);
+      }
     }
 
-    axios.post("http://localhost:8081/uploadPost", formdata)
     formdata.append('message', message);
-    const config = {     
+
+    const config = {
       headers: { 'content-type': 'multipart/form-data' }
     }
+
     axios.post("http://localhost:8081/uploadPost", formdata, config)
-    .then(res => console.log(res))
-    .catch(err => console.log(err));
+      .then(res => console.log(res))
+      .catch(err => console.log(err));
   }
 
   // rendering previews
