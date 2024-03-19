@@ -38,12 +38,16 @@ export default function CreatePostModal({ onClose, existingProjectId = null, exi
   };
 
   useEffect(() => {
-    var formatted = [];
-    Object.keys(projects).forEach(function (key) {
-      formatted.push([projects[key].id, projects[key].name]);
-    });
-    setProjectsArray(formatted);
-  }, [])
+    axios.get(`http://localhost:8081/getProjectByUserId?userId=${userId}`)
+            .then(res => {
+              var formatted = [];
+              Object.keys(res.data).forEach(function (key) {
+                formatted.push([res.data[key].id, res.data[key].name]);
+              });
+              setProjectsArray(formatted);
+            })
+            .catch(err => console.log(err));
+  }, [projects])
 
   // rendering previews
   useEffect(() => {
