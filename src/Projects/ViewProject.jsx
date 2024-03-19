@@ -85,6 +85,30 @@ export default function ViewProject(props) {
     }
   }
 
+  function viewPosts(props) {
+    return (
+      <>
+        {props.list.length > 0 && (
+          <div className="title">
+            <Title2>{props.title}</Title2>
+          </div>
+        )}
+        {props.list.length > 0 ? (
+          <div className="grid">
+            {props.list.map(post => (
+              <div key={post.id} className="post-card">
+                <img src={`http://localhost:8081/images/${post.image}`} alt={`Post ${post.id}`} className="post-image" />
+                <p className="post-caption">{post.caption}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <Text align="center">{props.noPostsText}</Text>
+        )}
+      </>
+    );
+  }
+
   useEffect(() => {
     setCurrentPage("projects")
     axios.get(`http://localhost:8081/getProjectById?userId=${userId}&projectId=${id}`)
@@ -196,7 +220,7 @@ export default function ViewProject(props) {
               </div>
               <CreateButton setIsProjectModalOpen={setIsProjectModalOpen} setIsPostModalOpen={setIsPostModalOpen}></CreateButton>
               {isProjectModalOpen && <CreateProjectModal onCreate={createProject} onClose={closeProjectModal} editProject={isEditProject ? viewProject : null}/>}
-              {isPostModalOpen && <CreatePostModal onClose={() => setIsPostModalOpen(false)} existingProjectId={id} existingProjectName={viewProject.name} />}
+              {isPostModalOpen && <CreatePostModal onCreate={createPost} onClose={() => setIsPostModalOpen(false)} />}
             </>
           ) : (
             <div className="spinnerContainer">
