@@ -36,8 +36,8 @@ export default function Projects(props) {
       .then(res => {
         console.log(res)
         axios.post(`http://localhost:8081/followProject?userId=${userId}&projectId=${res.data.Status.insertId}`)
-        .then(res => setProjectsUpdated(!projectsUpdated))
-        .catch(err => console.log(err));
+          .then(res => setProjectsUpdated(!projectsUpdated))
+          .catch(err => console.log(err));
       })
       .catch(err => console.log(err));
   }
@@ -52,33 +52,42 @@ export default function Projects(props) {
   function toggleFollow(project) {
     if (project.followed == 1) {
       axios.post(`http://localhost:8081/unfollowProject?userId=${userId}&projectId=${project.id}`)
-      .then(res => setProjectsUpdated(!projectsUpdated))
-      .catch(err => console.log(err));
+        .then(res => setProjectsUpdated(!projectsUpdated))
+        .catch(err => console.log(err));
     }
     else {
       axios.post(`http://localhost:8081/followProject?userId=${userId}&projectId=${project.id}`)
-      .then(res => setProjectsUpdated(!projectsUpdated))
-      .catch(err => console.log(err));
+        .then(res => setProjectsUpdated(!projectsUpdated))
+        .catch(err => console.log(err));
     }
   }
 
   function ProjectsList(props) {
     return (
       <>
-        <div className="title">
-          <Title2>{props.title}</Title2>
-        </div>
-        {
-          props.list.length > 0 ? (
-            <div className="grid">
-              {props.list.map(project => (
-                <ProjectCard key={project.id} project={project} teams={teams} toggleFollow={toggleFollow}></ProjectCard> ))}
+        {projectsLoaded ? (
+          <>
+            <div className="title">
+              <Title2>{props.title}</Title2>
             </div>
-          ) : (
-            <div>
-              <Text align="center">{props.noProjectsText}</Text>
-            </div>
-          )
+            {
+              props.list.length > 0 ? (
+                <div className="grid">
+                  {props.list.map(project => (
+                    <ProjectCard key={project.id} project={project} teams={teams} toggleFollow={toggleFollow}></ProjectCard>))}
+                </div>
+              ) : (
+                <div>
+                  <Text align="center">{props.noProjectsText}</Text>
+                </div>
+              )
+            }
+          </>
+        ) : (
+          <div className="spinnerContainer">
+            <Spinner />
+          </div>
+        )
         }
       </>
     );
@@ -86,33 +95,36 @@ export default function Projects(props) {
 
   useEffect(() => {
     setCurrentPage("projects")
-    axios.get(`http://localhost:8081/getProjectByUserId?userId=${userId}`)
-      .then(res => {
-        var followedProjects = [];
-        var teamProjects = [];
-        for (var i = 0; i < res.data.length; i++) {
-          if (res.data[i].followed == 1) {
-            followedProjects.push(res.data[i])
+
+    if (userId !== undefined) {
+      axios.get(`http://localhost:8081/getProjectByUserId?userId=${userId}`)
+        .then(res => {
+          var followedProjects = [];
+          var teamProjects = [];
+          for (var i = 0; i < res.data.length; i++) {
+            if (res.data[i].followed == 1) {
+              followedProjects.push(res.data[i])
+            }
+            else {
+              teamProjects.push(res.data[i])
+            }
           }
-          else {
-            teamProjects.push(res.data[i])
-          }
-        }
-        setProjects(followedProjects)
-        setTeamProjects(teamProjects)
-        setProjectsLoaded(true)
-      })
-      .catch(err => console.log(err));
-  }, [projectsUpdated])
+          setProjects(followedProjects)
+          setTeamProjects(teamProjects)
+          setProjectsLoaded(true)
+        })
+        .catch(err => console.log(err));
+    }
+  }, [projectsUpdated, userId])
 
   return (
     <>
       {projectsLoaded ? (
         <div className="page">
-          <ProjectsList title="My Projects" list={projects} 
+          <ProjectsList title="My Projects" list={projects}
             noProjectsText="You are not following any projects. Create a project or follow an existing project."></ProjectsList>
           <br />
-          <ProjectsList title="Team Projects" list={teamProjects} 
+          <ProjectsList title="Team Projects" list={teamProjects}
             noProjectsText="There are no projects in your teams that you aren't following."></ProjectsList>
           <br />
           <CreateButton setIsProjectModalOpen={setIsProjectModalOpen} setIsPostModalOpen={setIsPostModalOpen}></CreateButton>
