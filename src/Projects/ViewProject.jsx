@@ -86,7 +86,7 @@ export default function ViewProject(props) {
     }
   }
 //<img src={`http://localhost:8081/images/${post.image}`} alt={`Post ${post.id}`} className="post-image" />
-function viewPosts() {
+function ViewPosts(props) {
   return (
     <>
      {projectLoaded ? (
@@ -94,14 +94,14 @@ function viewPosts() {
         <div className="title">
           <Title2>Posts</Title2>
         </div>
-        {posts.length > 0 && (
+        {props.length > 0 && (
           <div className="grid">
-            {posts.map(post => (
+            {props.list.map(post => (
               <PostCard key={post.id} image={post.image} caption={post.caption}></PostCard>
             ))}
           </div>
         )}
-        {posts.length === 0 && (
+        {props.length === 0 && (
           <Text align="center">There are no posts yet</Text>
         )}
       </>
@@ -219,14 +219,12 @@ function viewPosts() {
                   <Text>{viewProject.modified ? (`${String(viewProject.modified).replace("T", " ").slice(0, -5)} by ${viewProject.modifiedBy}`) : ("N/A")} </Text>
                 </div>
               </div>
-            
-              viewPosts?(
-                <viewPosts list={posts} noPostsText="There are no posts yet"></viewPosts>
-              )
+          
+                <ViewPosts list={posts} noPostsText="There are no posts yet"></ViewPosts>
               
               <CreateButton setIsProjectModalOpen={setIsProjectModalOpen} setIsPostModalOpen={setIsPostModalOpen}></CreateButton>
               {isProjectModalOpen && <CreateProjectModal onCreate={createProject} onClose={closeProjectModal} editProject={isEditProject ? viewProject : null}/>}
-              {isPostModalOpen && <CreatePostModal onClick={createPost} onClose={() => setIsPostModalOpen(false)} />}
+              {isPostModalOpen && <CreatePostModal onClose={() => setIsPostModalOpen(false)} existingProjectId={id} existingProjectName={viewProject.name} />}
             </>
           ) : (
             <div className="spinnerContainer">
