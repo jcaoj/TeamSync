@@ -37,10 +37,10 @@ app.post('/uploadPost', upload.array('image'), (req, res) => {
     const message = req.body.message;
     console.log(message);
 
-    const postSql = "INSERT INTO `posts`(`projectId`, `title`, `caption`, `created`) VALUES (1, ?, ?, ?)";
+    const postSql = "INSERT INTO `posts`(`projectId`, `title`, `caption`, `created`, `createdBy`) VALUES (?, ?, ?, ?, ?)";
     const imageSql = "INSERT INTO `imagesInPost`(`postId`, `image`, `caption`) VALUES (?, ?, ?)";
 
-    db.query(postSql, ["testPost", "testCaption", new Date()], (err, result) => {
+    db.query(postSql, [req.query.projectId, req.query.title, req.query.caption, new Date(), req.query.username], (err, result) => {
         if(err) return res.json({Message: err});
 
         // Upload images using postId from first query
@@ -60,6 +60,14 @@ app.get('/getPosts', (req, res) => {
         return res.json(result);
     })
 })
+app.get('/getPostsByProjectId', (req, res) => {
+    const sql = "select p.id, p.title, p.caption, p.created, p.createdBy, p.modified, p.modifiedBy, (select image from imagesInPost where postId=p.id) as imageName from `posts` as p where p.projectId=?";
+    db.query(sql, [req.query.projectId], (err, result) => {
+        if(err) return res.json({Message: err});
+        return res.json(result);
+    })
+})
+
 //#endregion
 
 //#region Projects

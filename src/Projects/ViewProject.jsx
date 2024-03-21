@@ -11,7 +11,8 @@ import {
   ToolbarButton,
   Toolbar,
   ToolbarGroup,
-  Spinner
+  Spinner,
+  Card
 } from "@fluentui/react-components";
 import {
   ArrowLeft24Regular,
@@ -27,6 +28,7 @@ import CreateButton from "./CreateButton";
 import CreatePostModal from "./CreatePostModal";
 import CreateProjectModal from "./CreateProjectModal";
 import axios from 'axios';
+import PostCard from "./PostsCard";
 
 export default function ViewProject(props) {
   const { username, userId, currentPage, setCurrentPage, statuses, setStatuses } = useContext(Context);
@@ -34,6 +36,8 @@ export default function ViewProject(props) {
   const navigate = useNavigate();
   const [viewProject, setViewProject] = useState();
   const [team, setTeam] = useState();
+  const [posts, setPosts] = useState([]);
+  const [postsLoaded, setPostsLoaded] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [isEditProject, setIsEditProject] = useState(false);
@@ -81,13 +85,32 @@ export default function ViewProject(props) {
       .catch(err => console.log(err));
     }
   }
+//<img src={`http://localhost:8081/images/${post.image}`} alt={`Post ${post.id}`} className="post-image" />
+function ViewPosts(props) {
+  return (
+    <>
+     {projectLoaded ? (
+      <>
+        {props.list.length > 0 && (
+          <div className="postsGrid">
+            {props.list.map(post => (
+              <PostCard key={post.id} post={post}></PostCard>
+            ))}
+          </div>
+        )}
+        {props.list.length === 0 && (
+          <Text align="center">There are no posts yet</Text>
+        )}
+      </>
+     ) : (
+      <div className="spinnerContainer">
+        <Spinner />
+      </div>
+    )}
+  </>
+  );
+}
 
-  function createPost(post) {
-    setIsPostModalOpen(false);
-    axios.post(`http://localhost:8081/uploadPost?projectId=${post.image}&message=${post.message}`)
-      .then(res => console.log(res))
-      .catch(err => console.log(err));
-  }
 
   useEffect(() => {
     setCurrentPage("projects")
@@ -104,8 +127,15 @@ export default function ViewProject(props) {
 
     })
     .catch(err => console.log(err));
-  }, [projectEdited])
+     // get posts related to the project
+     axios.get(`http://localhost:8081/getPostsByProjectId?projectId=${id}`)
+     .then(res => {
+       setPosts(res.data);
+     })
+     .catch(err => console.log(err));
+  }, [projectEdited]);
 
+ 
   return (
     <>
       {
@@ -145,17 +175,14 @@ export default function ViewProject(props) {
                   />
                 </ToolbarGroup>
               </Toolbar>
-
+             
               <div className="responsive-two-column-grid">
-                <div>
+                <div className="column">
                   <div className="title">
                     <Title2>{viewProject.name}</Title2>
                   </div>
-                  <div>
-                    <Button appearance="primary">
-                      Create Post
-                    </Button>
-                  </div>
+
+                  <ViewPosts list={posts} noPostsText="There are no posts yet"></ViewPosts>
                 </div>
                 <div>
                   <Subtitle2>Team</Subtitle2> <br />
@@ -186,9 +213,10 @@ export default function ViewProject(props) {
                   <Text>{viewProject.modified ? (`${String(viewProject.modified).replace("T", " ").slice(0, -5)} by ${viewProject.modifiedBy}`) : ("N/A")} </Text>
                 </div>
               </div>
+                        
               <CreateButton setIsProjectModalOpen={setIsProjectModalOpen} setIsPostModalOpen={setIsPostModalOpen}></CreateButton>
               {isProjectModalOpen && <CreateProjectModal onCreate={createProject} onClose={closeProjectModal} editProject={isEditProject ? viewProject : null}/>}
-              {isPostModalOpen && <CreatePostModal onCreate={createPost} onClose={() => setIsPostModalOpen(false)} />} {/* Render post modal */}
+              {isPostModalOpen && <CreatePostModal onClose={() => setIsPostModalOpen(false)} existingProjectId={id} existingProjectName={viewProject.name} />}
             </>
           ) : (
             <div className="spinnerContainer">
