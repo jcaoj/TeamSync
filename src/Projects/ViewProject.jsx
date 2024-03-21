@@ -91,17 +91,14 @@ function ViewPosts(props) {
     <>
      {projectLoaded ? (
       <>
-        <div className="title">
-          <Title2>Posts</Title2>
-        </div>
-        {props.length > 0 && (
-          <div className="grid">
+        {props.list.length > 0 && (
+          <div className="postsGrid">
             {props.list.map(post => (
-              <PostCard key={post.id} image={post.image} caption={post.caption}></PostCard>
+              <PostCard key={post.id} post={post}></PostCard>
             ))}
           </div>
         )}
-        {props.length === 0 && (
+        {props.list.length === 0 && (
           <Text align="center">There are no posts yet</Text>
         )}
       </>
@@ -180,15 +177,12 @@ function ViewPosts(props) {
               </Toolbar>
              
               <div className="responsive-two-column-grid">
-                <div>
+                <div className="column">
                   <div className="title">
                     <Title2>{viewProject.name}</Title2>
                   </div>
-                  <div>
-                    <Button appearance="primary"onClick={() => setIsPostModalOpen(true)}>
-                      Create Post
-                    </Button>
-                  </div>
+
+                  <ViewPosts list={posts} noPostsText="There are no posts yet"></ViewPosts>
                 </div>
                 <div>
                   <Subtitle2>Team</Subtitle2> <br />
@@ -219,9 +213,7 @@ function ViewPosts(props) {
                   <Text>{viewProject.modified ? (`${String(viewProject.modified).replace("T", " ").slice(0, -5)} by ${viewProject.modifiedBy}`) : ("N/A")} </Text>
                 </div>
               </div>
-          
-                <ViewPosts list={posts} noPostsText="There are no posts yet"></ViewPosts>
-              
+                        
               <CreateButton setIsProjectModalOpen={setIsProjectModalOpen} setIsPostModalOpen={setIsPostModalOpen}></CreateButton>
               {isProjectModalOpen && <CreateProjectModal onCreate={createProject} onClose={closeProjectModal} editProject={isEditProject ? viewProject : null}/>}
               {isPostModalOpen && <CreatePostModal onClose={() => setIsPostModalOpen(false)} existingProjectId={id} existingProjectName={viewProject.name} />}

@@ -15,7 +15,8 @@ import {
   CardFooter,
   CardHeader,
   CardPreview,
-  Spinner
+  Spinner,
+  Image
 } from "@fluentui/react-components";
 
 const useStyles = makeStyles({
@@ -29,29 +30,44 @@ const useStyles = makeStyles({
   }
 });
 
-export default function PostCard({ post, posts }) {
+export default function PostCard(props) {
   const styles = useStyles();
-  const { image, caption } = useContext(Context);
+  const [imageName, setImageName] = useState();
+  const [title, setTitle] = useState(props.post.title);
+  const [caption, setCaption] = useState(props.post.caption);
   const [contextLoaded, setContextLoaded] = useState(false);
   const navigate = useNavigate();
+  const images = require.context('../../server/public/images', true);
 
   useEffect(() => {
-    if (image && caption) {
+    if (title && caption) {
       setContextLoaded(true)
     }
-  }, [image, caption])
+  }, [title, caption])
 
   return (
     <> {
       contextLoaded ? (
         <Card className={styles.card}>
           <CardHeader
-            image={posts[post.image]} 
-            description={<Body1Strong>{post.caption}</Body1Strong>}
+            //image={posts[post.image]} 
+            header={<Subtitle2Stronger>{title}</Subtitle2Stronger>}
+            description={<Body1Strong>{caption}</Body1Strong>}
           />
+
+          { (props.post.imageName == null) ? (
+                <></>
+                ) : (
+                  <CardPreview>
+                  <img src={images(`./${props.post.imageName}`)}
+                    alt="Preview of a Word document: About Us - Overview"
+                  />
+                </CardPreview>
+                )
+          }
         </Card>
       ) : (
-        <Spinner/>
+        <Spinner />
       )
     }
     </>
