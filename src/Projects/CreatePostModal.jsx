@@ -16,7 +16,7 @@ export default function CreatePostModal({ onClose, existingProjectId = null, exi
   const [status, setStatus] = useState('');
 
   const [projectsArray, setProjectsArray] = useState([]);
-  const { userId, statuses, setStatuses, projects } = useContext(Context);
+  const { username, userId, statuses, setStatuses, projects } = useContext(Context);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -30,7 +30,7 @@ export default function CreatePostModal({ onClose, existingProjectId = null, exi
       formdata.append('image', files[i]);
     }
 
-    axios.post(`http://localhost:8081/uploadPost?projectId=${projectId}&title=${title}&caption=${caption}`, formdata)
+    axios.post(`http://localhost:8081/uploadPost?projectId=${projectId}&title=${title}&caption=${caption}&username=${username}`, formdata)
       .then(res => console.log(res))
       .catch(err => console.log(err));
 

@@ -16,7 +16,8 @@ import {
   CardHeader,
   CardPreview,
   Spinner,
-  Image
+  Image,
+  Avatar
 } from "@fluentui/react-components";
 
 const useStyles = makeStyles({
@@ -51,10 +52,19 @@ export default function PostCard(props) {
         <Card className={styles.card}>
           <CardHeader
             //image={posts[post.image]} 
-            header={<Subtitle2Stronger>{title}</Subtitle2Stronger>}
-            description={<Body1Strong>{caption}</Body1Strong>}
+            header={<><Subtitle2Stronger>{title}</Subtitle2Stronger> 
+              <div className="postCreatedByDate">
+                <Caption1>{String(props.post.created).replace("T", " ").slice(0, -5)}</Caption1>
+              </div>
+            </>}
+            description={ <><div className="postCreatedBy">
+              <Avatar name={props.post.createdBy} size={20} /> 
+              <Body1Strong className="postCreatedByName">{props.post.createdBy}</Body1Strong>
+              </div></>}
           />
-
+          <p className={styles.text}>
+            {caption}
+          </p>
           { (props.post.imageName == null) ? (
                 <></>
                 ) : (
