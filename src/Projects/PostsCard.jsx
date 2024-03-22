@@ -69,9 +69,10 @@ export default function PostCard(props) {
                 <></>
                 ) : (
                   <CardPreview>
-                  <img src={images(`./${props.post.imageName}`)}
-                    alt="Preview of a Word document: About Us - Overview"
-                  />
+                    <div className="postImage">
+                    <img src={images(`./${props.post.imageName}`)}
+                    alt="Preview of a Word document: About Us - Overview"/>
+                    </div>
                 </CardPreview>
                 )
           }

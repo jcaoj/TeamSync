@@ -85,7 +85,7 @@ export default function ViewProject(props) {
       .catch(err => console.log(err));
     }
   }
-//<img src={`http://localhost:8081/images/${post.image}`} alt={`Post ${post.id}`} className="post-image" />
+
 function ViewPosts(props) {
   return (
     <>
@@ -99,7 +99,7 @@ function ViewPosts(props) {
           </div>
         )}
         {props.list.length === 0 && (
-          <Text align="center">There are no posts yet</Text>
+          <Text align="center">There are no posts yet.</Text>
         )}
       </>
      ) : (
@@ -110,7 +110,6 @@ function ViewPosts(props) {
   </>
   );
 }
-
 
   useEffect(() => {
     setCurrentPage("projects")
