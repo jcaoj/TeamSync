@@ -41,6 +41,9 @@ export default function PostCard(props) {
   const images = require.context('../../server/public/images', true);
 
   useEffect(() => {
+    if (!props.post.caption) {
+      setCaption(true)
+    }
     if (title && caption) {
       setContextLoaded(true)
     }
@@ -52,28 +55,31 @@ export default function PostCard(props) {
         <Card className={styles.card}>
           <CardHeader
             //image={posts[post.image]} 
-            header={<><Subtitle2Stronger>{title}</Subtitle2Stronger> 
+            header={<><Subtitle2Stronger>{title}</Subtitle2Stronger>
               <div className="postCreatedByDate">
                 <Caption1>{String(props.post.created).replace("T", " ").slice(0, -5)}</Caption1>
               </div>
             </>}
-            description={ <><div className="postCreatedBy">
-              <Avatar name={props.post.createdBy} size={20} /> 
+            description={<><div className="postCreatedBy">
+              <Avatar name={props.post.createdBy} size={20} />
               <Body1Strong className="postCreatedByName">{props.post.createdBy}</Body1Strong>
-              </div></>}
+            </div></>}
           />
           <p className={styles.text}>
             {caption}
           </p>
-          { (props.post.imageName == null) ? (
-                <></>
-                ) : (
-                  <CardPreview>
-                  <img src={images(`./${props.post.imageName}`)}
-                    alt="Preview of a Word document: About Us - Overview"
-                  />
-                </CardPreview>
-                )
+          {(props.post.imageName == null) ? (
+            <></>
+          ) : (
+            <CardPreview>
+              <div className="postImageContainer">
+
+                <img className="postImage" src={images(`./${props.post.imageName}`)}
+                  alt="Preview of a Word document: About Us - Overview"
+                />
+              </div>
+            </CardPreview>
+          )
           }
         </Card>
       ) : (

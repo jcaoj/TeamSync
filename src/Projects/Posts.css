@@ -1,5 +1,6 @@
 .container {
   max-width: 600px;
+  height: 300px;;
   margin: 0 auto;
 }
   
@@ -8,12 +9,6 @@ h3 {
 }
 
 .fileUpload{
-  margin-top: 10px;
-}
-
-.postImage {
-  max-width: 100%;
-  height: auto;
   margin-top: 10px;
 }
 

@@ -4,6 +4,7 @@ import "../Modal.css";
 import axios from 'axios';
 import { Button, Textarea, Title2, Input, Label, Dropdown, Option } from '@fluentui/react-components';
 import { Context } from "../Context";
+import './Posts.css'
 
 export default function CreatePostModal({ onClose, existingProjectId = null, existingProjectName = null }) {
   const [files, setFiles] = useState();
