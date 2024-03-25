@@ -33,14 +33,15 @@ const db = mysql.createConnection({
 
 //#region Posts
 app.post('/uploadPost', upload.array('image'), (req, res) => {
-    console.log(req.files);
     const message = req.body.message;
-    console.log(message);
 
     const postSql = "INSERT INTO `posts`(`projectId`, `title`, `caption`, `created`, `createdBy`) VALUES (?, ?, ?, ?, ?)";
     const imageSql = "INSERT INTO `imagesInPost`(`postId`, `image`, `caption`) VALUES (?, ?, ?)";
 
-    db.query(postSql, [req.query.projectId, req.query.title, req.query.caption, new Date(), req.query.username], (err, result) => {
+    var caption = req.query.caption === 'undefined' ? "" : req.query.caption;
+    console.log(req.query.caption === 'undefined');
+    console.log("caption " + caption);
+    db.query(postSql, [req.query.projectId, req.query.title, caption, new Date(), req.query.username], (err, result) => {
         if(err) return res.json({Message: err});
 
         // Upload images using postId from first query

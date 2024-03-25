@@ -41,6 +41,9 @@ export default function PostCard(props) {
   const images = require.context('../../server/public/images', true);
 
   useEffect(() => {
+    if (!props.post.caption) {
+      setCaption(true)
+    }
     if (title && caption) {
       setContextLoaded(true)
     }
@@ -69,9 +72,12 @@ export default function PostCard(props) {
                 <></>
                 ) : (
                   <CardPreview>
-                  <img src={images(`./${props.post.imageName}`)}
+                    <div className="postImageContainer">
+
+                  <img className="postImage" src={images(`./${props.post.imageName}`)}
                     alt="Preview of a Word document: About Us - Overview"
                   />
+                  </div>
                 </CardPreview>
                 )
           }
