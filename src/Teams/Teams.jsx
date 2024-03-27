@@ -9,6 +9,7 @@ import axios from 'axios';
 export default function Teams() {
   const { setCurrentPage, userId, teams, setTeams } = useContext(Context);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [teamsChanged, setTeamsChanged] = useState(false);
 
   useEffect(() => {
     setCurrentPage("teams");
@@ -23,15 +24,13 @@ export default function Teams() {
     };
   
     fetchData();
-  }, [setCurrentPage, setTeams]);
+  }, [setCurrentPage, setTeams, teamsChanged]);
 
   const handleCreateTeam = (newTeam) => {
-    
     axios.post('http://localhost:8081/uploadTeam', newTeam)
     .then(res => {
       console.log(res);
-      const addedTeam = { ...newTeam, id: res.data.Status.insertId };
-      setTeams({ ...teams, [addedTeam.id]: addedTeam });
+      setTeamsChanged(!teamsChanged)
     })
     .catch(err => {
       console.error(err);

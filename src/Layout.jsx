@@ -14,6 +14,7 @@ import {
     MenuList,
     MenuItem,
     MenuPopover,
+    Spinner
 } from "@fluentui/react-components";
 import Logo from "./logo2.png";
 import { Outlet, useNavigate } from 'react-router-dom'
@@ -54,8 +55,9 @@ const useStyles = makeStyles({
 
 export default function Layout() {
     const styles = useStyles()
-    const { username, setUsername, userId, setUserId, statuses, setStatuses, teams, setTeams, projects, setProjects } = useContext(Context);
-    const [currentPage, setCurrentPage] = useState("projects");
+    const { username, setUsername, userId, setUserId, setStatuses, teams, setTeams, projects, setProjects, currentPage, setCurrentPage } = useContext(Context);
+    //const [currentPage, setCurrentPage] = useState("projects");
+    const [pageLoaded, setPageLoaded] = useState(false);
     const navigate = useNavigate();
 
     const NavToPage = (event, data) => {
@@ -121,45 +123,60 @@ export default function Layout() {
                 .then(res => formatProjects(res.data))
                 .catch(err => console.log(err));
         }
-    }, [userId])
+
+        if (currentPage) {
+            setPageLoaded(true);
+        }
+    }, [userId, currentPage])
 
     return (
         <>
-            <div className={styles.root}>
-                <div className={styles.logoTitle}>
-                    <Image
-                        alt="TeamSync Logo"
-                        src={Logo}
-                        height={35}
-                        width={35}
-                    />
-                    <Subtitle1>TeamSync</Subtitle1>
-                </div>
-                <TabList selectedValue={currentPage} onTabSelect={NavToPage}>
-                    <Tab value="projects">Projects</Tab>
-                    <Tab value="teams">Teams</Tab>
-                    <Tab value="settings">Settings</Tab>
-                    <Tab value="posts">Posts</Tab>
-                </TabList>
-                <div className={styles.avatar}>
-                    <Menu>
-                        <MenuTrigger disableButtonEnhancement>
-                            <Avatar name={username} />
-                        </MenuTrigger>
+            {
+                pageLoaded ? (
+                    <>
+                        <div className={styles.root}>
+                            <div className={styles.logoTitle}>
+                                <Image
+                                    alt="TeamSync Logo"
+                                    src={Logo}
+                                    height={35}
+                                    width={35}
+                                />
+                                <Subtitle1>TeamSync</Subtitle1>
+                            </div>
+                            <TabList selectedValue={currentPage} onTabSelect={NavToPage}>
+                                <Tab value="projects">Projects</Tab>
+                                <Tab value="teams">Teams</Tab>
+                                <Tab value="settings">Settings</Tab>
+                            </TabList>
+                            <div className={styles.avatar}>
+                                <Menu>
+                                    <MenuTrigger disableButtonEnhancement>
+                                        <Avatar name={username} />
+                                    </MenuTrigger>
 
-                        <MenuPopover>
-                            <Subtitle2 className={styles.username}>{username}</Subtitle2>
-                            <br /><br />
-                            <MenuList>
-                                <MenuItem onClick={goToArchivedProjects}>Archived Projects</MenuItem>
-                                <MenuItem onClick={sendToLogin}>Log Out</MenuItem>
-                            </MenuList>
-                        </MenuPopover>
-                    </Menu>
+                                    <MenuPopover>
+                                        <Subtitle2 className={styles.username}>{username}</Subtitle2>
+                                        <br /><br />
+                                        <MenuList>
+                                            <MenuItem onClick={goToArchivedProjects}>Archived Projects</MenuItem>
+                                            <MenuItem onClick={sendToLogin}>Log Out</MenuItem>
+                                        </MenuList>
+                                    </MenuPopover>
+                                </Menu>
 
-                </div>
-            </div>
-            <Divider className={styles.divider} />
+                            </div>
+                        </div>
+                        <Divider className={styles.divider} />
+                        
+                    </>
+                ) :
+                    (
+                        <div className="spinnerContainer">
+                            <Spinner />
+                        </div>
+                    )
+            }
             <Outlet />
         </>
     );
