@@ -9,35 +9,41 @@ import {
   TableCellLayout,
   createTableColumn,
   Button,
+  Avatar
 } from '@fluentui/react-components';
 import { OpenRegular, EditRegular, DeleteRegular } from '@fluentui/react-icons';
-import {useNavigate } from "react-router-dom";
+import "./Teams.css";
+import axios from 'axios';
 
-export default function TeamTable({ teams = [] }) { 
+export default function UsersTable({ users = [], teamId }) { 
 
-  const navigate = useNavigate();
+  function removeUserFromTeam(userId) {
+    axios.post(`http://localhost:8081/removeUserFromTeam?userId=${userId}&teamId=${teamId}`)
+      .then(res =>  {console.log(res)})
+      .catch(err => console.log(err));
+      
+  }
 
   const columns = [
     createTableColumn({
-      columnId: 'teamName',
-      renderHeaderCell: () => 'Team Name',
-      renderCell: (item) => <TableCellLayout>{item.name}</TableCellLayout>,
+      columnId: 'username',
+      renderHeaderCell: () => 'Username',
+      renderCell: (item) => <TableCellLayout>
+        <Avatar name={item.username} size={24} /> <div className='userName'>{item.username}</div>
+        </TableCellLayout>,
     }),
     createTableColumn({
-      columnId: 'description',
-      renderHeaderCell: () => 'Description',
-      renderCell: (item) => <TableCellLayout>{item.description}</TableCellLayout>,
-    }),
-    createTableColumn({
-      columnId: 'created',
-      renderHeaderCell: () => 'Created',
-      renderCell: (item) => <TableCellLayout>{String(item.created).replace("T", " ").slice(0, -5)}</TableCellLayout>,
+      columnId: 'added',
+      renderHeaderCell: () => 'Added',
+      renderCell: (item) => <TableCellLayout>
+        {String(item.added).replace("T", " ").slice(0, -5)}
+        </TableCellLayout>,
     })
   ];
 
   return (
     <DataGrid
-      items={teams} 
+      items={users} 
       columns={columns}
       sortable
       getRowId={(item) => item && item.id ? item.id.toString(): 'fallback-id'}
@@ -51,7 +57,7 @@ export default function TeamTable({ teams = [] }) {
       </DataGridHeader>
       <DataGridBody>
         {({ item, rowId }) => (
-          <DataGridRow key={rowId} onClick={() => navigate(`/viewTeam/${item.id}`)}>
+          <DataGridRow key={rowId}>
             {({ renderCell, columnId }) => (
               <DataGridCell>
                 {renderCell(item)}
