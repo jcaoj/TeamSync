@@ -215,7 +215,7 @@ function ViewPosts(props) {
                         
               <CreateButton setIsProjectModalOpen={setIsProjectModalOpen} setIsPostModalOpen={setIsPostModalOpen}></CreateButton>
               {isProjectModalOpen && <CreateProjectModal onCreate={createProject} onClose={closeProjectModal} editProject={isEditProject ? viewProject : null}/>}
-              {isPostModalOpen && <CreatePostModal onClose={() => setIsPostModalOpen(false)} existingProjectId={id} existingProjectName={viewProject.name} />}
+              {isPostModalOpen && <CreatePostModal onCreate={() => setProjectEdited(!projectEdited)} onClose={() => setIsPostModalOpen(false)} existingProjectId={id} existingProjectName={viewProject.name} />}
             </>
           ) : (
             <div className="spinnerContainer">

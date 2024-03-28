@@ -40,7 +40,29 @@ export default function CreateTeamModal({ onCreate, onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     const userIdsArray = Array.from(selectedUsers).map(id => parseInt(id, 10));
-    onCreate({ id: Date.now(), name: teamName, description, username, userIds: userIdsArray });
+    userIdsArray.push(userId);
+
+    if (isEditTeam) {
+      var addedUserIds = [];
+      var removedUserIds = [];
+      for (var i = 0; i < userIdsArray.length; i++) {
+        if (!originalUserList.includes(userIdsArray[i]) && userIdsArray[i] !== userId) {
+          addedUserIds.push(userIdsArray[i])
+        }
+      }
+
+      for (var i = 0; i < originalUserList.length; i++) {
+        if (!userIdsArray.includes(originalUserList[i])) {
+          removedUserIds.push(originalUserList[i])
+        }
+      }
+
+      onEdit({ id, name: teamName, description, username, addedUserIds, removedUserIds });
+    }
+    else {
+      userIdsArray.shift();
+      onCreate({ name: teamName, description, username, userIds: userIdsArray });
+    }
   };
 
   return (

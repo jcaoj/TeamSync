@@ -62,7 +62,7 @@ app.get('/getPosts', (req, res) => {
     })
 })
 app.get('/getPostsByProjectId', (req, res) => {
-    const sql = "select p.id, p.title, p.caption, p.created, p.createdBy, p.modified, p.modifiedBy, (select image from imagesInPost where postId=p.id) as imageName from `posts` as p where p.projectId=?";
+    const sql = "select p.id, p.title, p.caption, p.created, p.createdBy, p.modified, p.modifiedBy, (select image from imagesInPost where postId=p.id) as imageName from `posts` as p where p.projectId=? order by p.created desc";
     db.query(sql, [req.query.projectId], (err, result) => {
         if(err) return res.json({Message: err});
         return res.json(result);

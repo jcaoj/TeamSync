@@ -33,7 +33,7 @@ const useStyles = makeStyles({
 
 export default function PostCard(props) {
   const styles = useStyles();
-  const [imageName, setImageName] = useState();
+  const [image, setImage] = useState();
   const [title, setTitle] = useState(props.post.title);
   const [caption, setCaption] = useState(props.post.caption);
   const [contextLoaded, setContextLoaded] = useState(false);
@@ -46,6 +46,14 @@ export default function PostCard(props) {
     }
     if (title && caption) {
       setContextLoaded(true)
+    }
+
+
+    try {
+      setImage(images(`./${props.post.imageName}`))
+    }
+    catch (err) {
+      setImage(images(`./placeholder.png`))
     }
   }, [title, caption])
 
@@ -73,9 +81,8 @@ export default function PostCard(props) {
           ) : (
             <CardPreview>
               <div className="postImageContainer">
-
-                <img className="postImage" src={images(`./${props.post.imageName}`)}
-                  alt="Preview of a Word document: About Us - Overview"
+                <img className="postImage" src={image}
+                  alt="Post image"
                 />
               </div>
             </CardPreview>
