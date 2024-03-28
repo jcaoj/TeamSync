@@ -159,8 +159,8 @@ app.post('/uploadTeam', (req, res) => {
 
         if (userIds && userIds.length > 0) {
             const teamId = teamResult.insertId; 
-            const sqlAssignUsers = "INSERT INTO `usersInTeam`(`userId`, `teamId`) VALUES ?";
-            const usersValues = userIds.map(userId => [userId, teamId]);
+            const sqlAssignUsers = "INSERT INTO `usersInTeam`(`userId`, `teamId`, `added`) VALUES ?";
+            const usersValues = userIds.map(userId => [userId, teamId, new Date()]);
       
             db.query(sqlAssignUsers, [usersValues], (assignErr, assignResult) => {
               if (assignErr) {
@@ -178,8 +178,44 @@ app.post('/uploadTeam', (req, res) => {
 });
 
 
+app.post('/editTeam', (req, res) => {
+    const { id, name, description, username, addedUserIds, removedUserIds } = req.body;
+    const sql = "UPDATE `teams` SET `name` = ?, `description` = ?, `modified` = ?, `modifiedBy` = ? WHERE `id` = ?";
+    const addUserSql = "INSERT INTO `usersInTeam`(`userId`, `teamId`, `added`) VALUES ?";
+    const removeUserSql = "DELETE FROM `usersInTeam` where userId=? and teamId=?";
+
+    var resultMsg = "";
+
+    db.query(sql, [name, description, new Date(), username, id], (err, result) => {
+        if(err) return res.json({Message: err});
+        resultMsg += result;
+    })
+
+    if (addedUserIds.length > 0) {
+        const addUserValues = addedUserIds.map(userId => [userId, id, new Date()]);
+        db.query(addUserSql, [addUserValues], (assignErr, assignResult) => {
+            if (assignErr) {
+              console.error(assignErr);
+              res.status(500).json({ Message: "Error assigning users to team", assignErr });
+            }
+    
+            resultMsg += " Added users to team.";
+        });
+    }
+   
+    for (var i = 0; i < removeUserSql.length; i++) {
+        db.query(removeUserSql, [removedUserIds[i], id], (err, result) => {
+            if(err) return res.json({Message: err});
+            resultMsg += result;
+        })
+    }
+
+    return res.json({Status: resultMsg});
+})
+
+
 app.get('/getTeams', (req, res) => {
-    const sql = "select * from teams where id in (select teamId from usersInTeam where userId=?)";
+    const sql = "select * from teams where id in (select teamId from usersInTeam where userId=?) order by id";
     db.query(sql, [req.query.userId], (err, result) => {
         if(err) return res.json({Message: err});
         return res.json(result);
@@ -191,6 +227,14 @@ app.get('/getTeamById', (req, res) => {
     db.query(sql, [req.query.teamId], (err, result) => {
         if(err) return res.json({Message: err});
         return res.json(result);
+    })
+})
+
+app.post('/deleteTeam', (req, res) => {
+    const sql = "DELETE FROM `teams` WHERE `id` = ?";
+    db.query(sql, [req.query.teamId], (err, result) => {
+        if(err) return res.json({Message: err});
+        return res.json({Status: result});
     })
 })
 
@@ -235,8 +279,42 @@ app.get('/getUsers', (req, res) => {
     });
 });
 
+app.get('/getUsersByTeamId', (req, res) => {
+    const sql = "select distinct u.id, u.username, uit.added from users as u join usersInTeam as uit on u.id=uit.userId where uit.teamId=? order by u.id;";
+    db.query(sql, [req.query.teamId], (err, results) => {
+        if (err) {
+            console.error('Error fetching users:', err);
+            res.status(500).json({ message: 'Error fetching users', error: err });
+        } else {
+            res.json(results);
+        }
+    });
+});
 
+app.post('/addUserToTeam', (req, res) => {
+    const sqlAssignUsers = "INSERT INTO `usersInTeam`(`userId`, `teamId`) VALUES ?";
+    const usersValues = userIds.map(userId => [userId, teamId]);
+
+    db.query(sqlAssignUsers, [usersValues], (assignErr, assignResult) => {
+      if (assignErr) {
+        console.error(assignErr);
+        return res.status(500).json({ Message: "Error assigning users to team", assignErr });
+      }
+
+      res.json({ Status: "Team created and users assigned", teamId: teamId });
+    })
+
+})
+
+app.post('/removeUserFromTeam', (req, res) => {
+    const sql = "DELETE FROM `usersInTeam` where userId=? and teamId=?";
+    db.query(sql, [req.query.userId, req.query.teamId], (err, result) => {
+        if(err) return res.json({Message: err});
+        return res.json(result);
+    })
+})
 
 //#endregion
+
 app.listen(8081, () => {console.log("Running")})
 

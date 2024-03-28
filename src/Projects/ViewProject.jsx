@@ -11,8 +11,7 @@ import {
   ToolbarButton,
   Toolbar,
   ToolbarGroup,
-  Spinner,
-  Card
+  Spinner
 } from "@fluentui/react-components";
 import {
   ArrowLeft24Regular,

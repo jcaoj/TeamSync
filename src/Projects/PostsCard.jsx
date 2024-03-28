@@ -90,7 +90,9 @@ export default function PostCard(props) {
           }
         </Card>
       ) : (
-        <Spinner />
+        <div className="spinnerContainer">
+          <Spinner />
+        </div>
       )
     }
     </>

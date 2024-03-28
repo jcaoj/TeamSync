@@ -13,11 +13,12 @@
 
 .postImage {
     object-fit: contain;
-    max-height: 300px;
-    padding: 5px;
+    max-height: 290px;
+    max-width: 100%;
+    height: 100%;
+    width: auto;
 }
 
 .postImageContainer{
-    height: 300px;
-    
+    max-height: 300px;
 }
