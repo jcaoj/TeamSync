@@ -54,86 +54,88 @@ export default function ViewProject(props) {
 
     if (props.isEditProject) {
       axios.post(`http://localhost:8081/editProject?id=${id}&teamId=${props.teamId}&name=${props.name}&description=${props.description}&status=${props.status}&username=${username}`)
-      .then(res =>  {
-        console.log(res) 
-        setProjectEdited(!projectEdited)
-      })
-      .catch(err => console.log(err));
+        .then(res => {
+          console.log(res)
+          setProjectEdited(!projectEdited)
+        })
+        .catch(err => console.log(err));
     }
     else {
       axios.post(`http://localhost:8081/uploadProject?teamId=${props.teamId}&name=${props.name}&description=${props.description}&status=${props.status}&userId=${userId}`)
-      .then(res =>  {
-        console.log(res)
-        axios.post(`http://localhost:8081/followProject?userId=${userId}&projectId=${res.data.Status.insertId}`)
-        .then(res => console.log(res))
+        .then(res => {
+          console.log(res)
+          axios.post(`http://localhost:8081/followProject?userId=${userId}&projectId=${res.data.Status.insertId}`)
+            .then(res => console.log(res))
+            .catch(err => console.log(err));
+        })
         .catch(err => console.log(err));
-      })
-      .catch(err => console.log(err));
     }
   }
 
   function toggleFollow() {
     if (viewProject.followed == 1) {
       axios.post(`http://localhost:8081/unfollowProject?userId=${userId}&projectId=${id}`)
-      .then(res => setProjectEdited(!projectEdited))
-      .catch(err => console.log(err));
+        .then(res => setProjectEdited(!projectEdited))
+        .catch(err => console.log(err));
     }
     else {
       axios.post(`http://localhost:8081/followProject?userId=${userId}&projectId=${id}`)
-      .then(res => setProjectEdited(!projectEdited))
-      .catch(err => console.log(err));
+        .then(res => setProjectEdited(!projectEdited))
+        .catch(err => console.log(err));
     }
   }
 
-function ViewPosts(props) {
-  return (
-    <>
-     {projectLoaded ? (
+  function ViewPosts(props) {
+    return (
       <>
-        {props.list.length > 0 && (
-          <div className="postsGrid">
-            {props.list.map(post => (
-              <PostCard key={post.id} post={post}></PostCard>
-            ))}
+        {projectLoaded ? (
+          <>
+            {props.list.length > 0 && (
+              <div className="postsGridContainer">
+                <div className="postsGrid">
+                  {props.list.map(post => (
+                    <PostCard key={post.id} post={post}></PostCard>
+                  ))}
+                </div>
+              </div>
+            )}
+            {props.list.length === 0 && (
+              <Text align="center">There are no posts yet.</Text>
+            )}
+          </>
+        ) : (
+          <div className="spinnerContainer">
+            <Spinner />
           </div>
         )}
-        {props.list.length === 0 && (
-          <Text align="center">There are no posts yet.</Text>
-        )}
       </>
-     ) : (
-      <div className="spinnerContainer">
-        <Spinner />
-      </div>
-    )}
-  </>
-  );
-}
+    );
+  }
 
   useEffect(() => {
     setCurrentPage("projects")
     axios.get(`http://localhost:8081/getProjectById?userId=${userId}&projectId=${id}`)
-    .then(res => {
-      setViewProject(res.data[0])
-      
-      axios.get(`http://localhost:8081/getTeamById?teamId=${res.data[0].teamId}`)
       .then(res => {
-        setTeam(res.data[0])
-        setProjectLoaded(true)
+        setViewProject(res.data[0])
+
+        axios.get(`http://localhost:8081/getTeamById?teamId=${res.data[0].teamId}`)
+          .then(res => {
+            setTeam(res.data[0])
+            setProjectLoaded(true)
+          })
+          .catch(err => console.log(err));
+
       })
       .catch(err => console.log(err));
-
-    })
-    .catch(err => console.log(err));
-     // get posts related to the project
-     axios.get(`http://localhost:8081/getPostsByProjectId?projectId=${id}`)
-     .then(res => {
-       setPosts(res.data);
-     })
-     .catch(err => console.log(err));
+    // get posts related to the project
+    axios.get(`http://localhost:8081/getPostsByProjectId?projectId=${id}`)
+      .then(res => {
+        setPosts(res.data);
+      })
+      .catch(err => console.log(err));
   }, [projectEdited]);
 
- 
+
   return (
     <>
       {
@@ -159,7 +161,7 @@ function ViewPosts(props) {
                   <ToolbarButton
                     aria-label="Follow Project"
                     appearance="subtle"
-                    icon={viewProject.followed == 1 ? (<Eye24Filled/>) : (<Eye24Regular />)}
+                    icon={viewProject.followed == 1 ? (<Eye24Filled />) : (<Eye24Regular />)}
                     onClick={toggleFollow}
                   />
                   <ToolbarButton
@@ -173,7 +175,7 @@ function ViewPosts(props) {
                   />
                 </ToolbarGroup>
               </Toolbar>
-             
+
               <div className="responsive-two-column-grid">
                 <div className="column">
                   <div className="title">
@@ -211,14 +213,14 @@ function ViewPosts(props) {
                   <Text>{viewProject.modified ? (`${String(viewProject.modified).replace("T", " ").slice(0, -5)} by ${viewProject.modifiedBy}`) : ("N/A")} </Text>
                 </div>
               </div>
-                        
+
               <CreateButton setIsProjectModalOpen={setIsProjectModalOpen} setIsPostModalOpen={setIsPostModalOpen}></CreateButton>
-              {isProjectModalOpen && <CreateProjectModal onCreate={createProject} onClose={closeProjectModal} editProject={isEditProject ? viewProject : null}/>}
+              {isProjectModalOpen && <CreateProjectModal onCreate={createProject} onClose={closeProjectModal} editProject={isEditProject ? viewProject : null} />}
               {isPostModalOpen && <CreatePostModal onCreate={() => setProjectEdited(!projectEdited)} onClose={() => setIsPostModalOpen(false)} existingProjectId={id} existingProjectName={viewProject.name} />}
             </>
           ) : (
             <div className="spinnerContainer">
-               <Spinner />
+              <Spinner />
             </div>
           )}
         </div>

@@ -22,7 +22,7 @@ import {
 import axios from "axios";
 
 export default function Login() {  
-    const {username, setUsername, userId, setUserId} = useContext(Context);
+    const {username, setUsername, userId, setUserId, profilePicName, setProfilePicName} = useContext(Context);
     const [usernameTemp, setUsernameTemp] = useState()
     const [password, setPassword] = useState()
     const [isSignUp, setIsSignUp] = useState()
@@ -68,6 +68,8 @@ export default function Login() {
                     localStorage.setItem("username", usernameTemp)
                     setUserId(res.data[0].id)
                     localStorage.setItem("userId", res.data[0].id)
+                    setProfilePicName(res.data[0].profilePic)
+                    localStorage.setItem("profilePicName", res.data[0].profilePic)
                     navigate("/projects")
                 }
             })

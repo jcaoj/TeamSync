@@ -7,6 +7,7 @@ import Posts from './Projects/CreatePost';
 import ViewProject from "./Projects/ViewProject";
 import ViewTeam from "./Teams/ViewTeam";
 import Login from "./Login";
+import Settings from "./Settings/Settings";
 import './App.css';
 import Layout from './Layout';
 
@@ -20,7 +21,7 @@ function App() {
           <Route path="projects" element={<Projects />} />
           <Route path="archivedProjects" element={<ArchivedProjects />} />
           <Route path="teams" element={<Teams />} />
-          <Route path="posts" element={<Posts />} />
+          <Route path="settings" element={<Settings />} />
           <Route exact path="/viewProject/:id" element={<ViewProject/>} />
           <Route path="/viewTeam/:id" element={<ViewTeam />} />
           <Route path="*" element={<Projects />} />

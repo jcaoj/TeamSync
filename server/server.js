@@ -314,6 +314,40 @@ app.post('/removeUserFromTeam', (req, res) => {
     })
 })
 
+app.post('/updateUser', upload.array('image'), (req, res) => {
+    var postSql = "UPDATE users ";
+    var filename = null;
+    if (req.files != null && req.files.length > 0) {
+        filename = req.files[0].filename;
+    }
+    var updateArray = [];
+    var sqlValueArray = [];
+    if (req.query.username !== 'undefined') {
+        updateArray.push("username=?");
+        sqlValueArray.push(req.query.username);
+    }
+    if (req.query.password !== 'undefined') {
+        updateArray.push("password=?");
+        sqlValueArray.push(req.query.password);
+    }
+    if (filename != null) {
+        updateArray.push("profilePic=?");
+        sqlValueArray.push(filename);
+    }
+
+    if (updateArray.length > 0) {
+        postSql += "set ";
+        postSql += updateArray.join(", ");
+    }
+
+    sqlValueArray.push(req.query.userId);
+    postSql += " where id=?";
+    
+    db.query(postSql, sqlValueArray, (err, result) => {
+        if(err) return res.json({Message: err});
+        return res.json({Status: result, fileName: filename});
+    })
+})
 //#endregion
 
 app.listen(8081, () => {console.log("Running")})

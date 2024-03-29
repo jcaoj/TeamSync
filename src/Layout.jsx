@@ -55,10 +55,12 @@ const useStyles = makeStyles({
 
 export default function Layout() {
     const styles = useStyles()
-    const { username, setUsername, userId, setUserId, setStatuses, teams, setTeams, projects, setProjects, currentPage, setCurrentPage } = useContext(Context);
+    const { username, setUsername, userId, setUserId, profilePicName, setProfilePicName, setStatuses, teams, setTeams, projects, setProjects, currentPage, setCurrentPage } = useContext(Context);
     //const [currentPage, setCurrentPage] = useState("projects");
     const [pageLoaded, setPageLoaded] = useState(false);
+    const [profilePic, setProfilePic] = useState(false);
     const navigate = useNavigate();
+    const images = require.context('../server/public/images', true);
 
     const NavToPage = (event, data) => {
         setCurrentPage(data.value);
@@ -70,6 +72,7 @@ export default function Layout() {
         setUserId(null);
         localStorage.removeItem("username")
         localStorage.removeItem("userId")
+        localStorage.removeItem("profilePicName")
         navigate("/login");
     }
 
@@ -105,6 +108,7 @@ export default function Layout() {
         if (!username && localStorage.getItem("username")) {
             setUsername(localStorage.getItem("username"))
             setUserId(localStorage.getItem("userId"))
+            setProfilePicName(localStorage.getItem("profilePicName"))
         }
         else if (!username) {
             sendToLogin()
@@ -122,6 +126,13 @@ export default function Layout() {
             axios.get(`http://localhost:8081/getProjectByUserId?userId=${userId}`)
                 .then(res => formatProjects(res.data))
                 .catch(err => console.log(err));
+
+            try {
+                setProfilePic(images(`./${profilePicName}`))
+            }
+            catch (err) {
+                setProfilePic(false);
+            }
         }
 
         if (currentPage) {
@@ -152,7 +163,15 @@ export default function Layout() {
                             <div className={styles.avatar}>
                                 <Menu>
                                     <MenuTrigger disableButtonEnhancement>
-                                        <Avatar name={username} />
+                                        {
+                                            !profilePic ? (
+                                                <Avatar name={username} />
+                                            ) : 
+                                            (
+                                                <Avatar name={username} image={{src: profilePic}} />
+                                            )
+                                        }
+                                        
                                     </MenuTrigger>
 
                                     <MenuPopover>

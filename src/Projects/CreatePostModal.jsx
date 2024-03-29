@@ -114,7 +114,7 @@ export default function CreatePostModal({ onCreate, onClose, existingProjectId =
           {previews &&
             previews.map((pic, index) => {
               return <img className="postImage" key={index} src={pic} alt={`preview-${index}`} />;
-            })}
+            })} 
           <div className="caption">
             <label>Caption:</label>
             <Textarea
