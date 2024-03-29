@@ -36,13 +36,17 @@
 }
 
 .postsGrid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: 8px;
-    margin-top: 5px;
+    column-count: 2;
+    grid-gap: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 20px;
 }
 
+<<<<<<< HEAD
 .postsGridContainer {
     height: 75vh;
     overflow-y: scroll;
 }
+=======
+>>>>>>> 21fb315b24bcfe7a7fab3048bd9f369cc3c9d957
