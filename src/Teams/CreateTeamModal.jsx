@@ -62,7 +62,7 @@ export default function CreateTeamModal({ onCreate, onClose, onEdit = null, edit
       var addedUserIds = [];
       var removedUserIds = [];
       for (var i = 0; i < userIdsArray.length; i++) {
-        if (!originalUserList.includes(userIdsArray[i])) {
+        if (!originalUserList.includes(userIdsArray[i]) && userIdsArray[i] !== userId) {
           addedUserIds.push(userIdsArray[i])
         }
       }

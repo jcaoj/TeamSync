@@ -6,7 +6,7 @@ import { Button, Textarea, Title2, Input, Label, Dropdown, Option } from '@fluen
 import { Context } from "../Context";
 import './Posts.css'
 
-export default function CreatePostModal({ onClose, existingProjectId = null, existingProjectName = null }) {
+export default function CreatePostModal({ onCreate, onClose, existingProjectId = null, existingProjectName = null }) {
   const [files, setFiles] = useState();
   const [previews, setPreviews] = useState();
   const [caption, setCaption] = useState();
@@ -21,18 +21,19 @@ export default function CreatePostModal({ onClose, existingProjectId = null, exi
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!files || files.length === 0) {
-      console.log("No image selected for upload");
-      return;
-    }
 
     const formdata = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      formdata.append('image', files[i]);
+    if (files && files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        formdata.append('image', files[i]);
+      }
     }
-
+    
     axios.post(`http://localhost:8081/uploadPost?projectId=${projectId}&title=${title}&caption=${caption}&username=${username}`, formdata)
-      .then(res => console.log(res))
+      .then(res => {
+        console.log(res)
+        onCreate()
+      })
       .catch(err => console.log(err));
 
     onClose();
