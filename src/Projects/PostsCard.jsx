@@ -60,6 +60,7 @@ export default function PostCard(props) {
   return (
     <> {
       contextLoaded ? (
+        <div className="postCardContainer">
         <Card className={styles.card}>
           <CardHeader
             //image={posts[post.image]} 
@@ -89,6 +90,7 @@ export default function PostCard(props) {
           )
           }
         </Card>
+        </div>
       ) : (
         <div className="spinnerContainer">
           <Spinner />

@@ -22,3 +22,7 @@
 .postImageContainer{
     max-height: 300px;
 }
+
+.postCardContainer {
+    padding-bottom: 15px;
+}

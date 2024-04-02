@@ -46,3 +46,8 @@
     gap: 20px;
 }
 
+.postsGridContainer {
+    height: 75vh;
+    overflow-y: scroll;
+    gap: 20px;
+}
