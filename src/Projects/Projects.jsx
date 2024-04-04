@@ -20,7 +20,7 @@ import { Context } from "../Context";
 import axios from 'axios';
 
 export default function Projects(props) {
-  const { username, userId, currentPage, setCurrentPage, statuses, setStatuses, teams, setTeams } = useContext(Context);
+  const { username, userId, currentPage, setCurrentPage } = useContext(Context);
   const [projects, setProjects] = useState([]);
   const [teamProjects, setTeamProjects] = useState([]);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
@@ -28,6 +28,24 @@ export default function Projects(props) {
   const [teamsLoaded, setTeamsLoaded] = useState(false);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [projectsUpdated, setProjectsUpdated] = useState(false);
+  const [statuses, setStatuses] = useState();
+  const [teams, setTeams] = useState();
+
+  function formatStatuses(statusesJSON) {
+    var statusDict = {};
+    Object.keys(statusesJSON).forEach(function (key) {
+      statusDict[statusesJSON[key].id] = statusesJSON[key];
+    });
+    setStatuses(statusDict);
+  }
+
+  function formatTeams(teamsJSON) {
+    var teamsDict = {};
+    Object.keys(teamsJSON).forEach(function (key) {
+      teamsDict[teamsJSON[key].id] = teamsJSON[key];
+    });
+    setTeams(teamsDict);
+  }
 
   function createProject(project) {
     setProjects([...projects, project]);
@@ -97,6 +115,14 @@ export default function Projects(props) {
     setCurrentPage("projects")
 
     if (userId !== undefined) {
+      axios.get("http://localhost:8081/getStatuses")
+        .then(res => formatStatuses(res.data))
+        .catch(err => console.log(err));
+
+      axios.get(`http://localhost:8081/getTeams?userId=${userId}`)
+        .then(res => formatTeams(res.data))
+        .catch(err => console.log(err));
+
       axios.get(`http://localhost:8081/getProjectByUserId?userId=${userId}`)
         .then(res => {
           var followedProjects = [];
