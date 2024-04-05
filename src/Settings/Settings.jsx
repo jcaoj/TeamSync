@@ -16,7 +16,6 @@ export default function Settings() {
     const [files, setFiles] = useState();
     const [previews, setPreviews] = useState();
     const [newUsername, setNewUsername] = useState();
-    const [oldPassword, setOldPassword] = useState();
     const [newPassword, setNewPassword] = useState();
 
     const handleSubmit = (e) => {
@@ -97,13 +96,6 @@ export default function Settings() {
                         placeholder="Enter New Username"
                         value={newUsername}
                         onChange={(e) => setNewUsername(e.target.value)} />
-                    <Label htmlFor="oldPassword" size="large">Old Password</Label>
-                    <Input id="oldPassword"
-                        className="input"
-                        type="password"
-                        placeholder="Enter Old Password"
-                        value={oldPassword}
-                        onChange={(e) => setOldPassword(e.target.value)} />
                     <Label htmlFor="newPassword" size="large">New Password</Label>
                     <Input id="newPassword"
                         className="input"
