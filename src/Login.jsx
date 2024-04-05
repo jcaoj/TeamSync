@@ -45,6 +45,8 @@ export default function Login() {
                         localStorage.setItem("username", usernameTemp)
                         setUserId(res.data.insertId)
                         localStorage.setItem("userId", res.data.insertId)
+                        setProfilePicName(null)
+                        localStorage.setItem("profilePicName", null)
                         navigate("/projects")
                     })
                     .catch(err => console.log(err));

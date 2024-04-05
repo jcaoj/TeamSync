@@ -133,11 +133,12 @@ export default function Layout() {
             catch (err) {
                 setProfilePic(false);
             }
+
+            if (currentPage) {
+                setPageLoaded(true);
+            }
         }
 
-        if (currentPage) {
-            setPageLoaded(true);
-        }
     }, [userId, currentPage])
 
     return (
@@ -196,7 +197,7 @@ export default function Layout() {
                         </div>
                     )
             }
-            <Outlet />
+           <Outlet />
         </>
     );
 }
