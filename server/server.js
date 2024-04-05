@@ -280,7 +280,7 @@ app.get('/getUsers', (req, res) => {
 });
 
 app.get('/getUsersByTeamId', (req, res) => {
-    const sql = "select distinct u.id, u.username, uit.added from users as u join usersInTeam as uit on u.id=uit.userId where uit.teamId=? order by u.id;";
+    const sql = "select distinct u.id, u.username, u.profilePic, uit.added from users as u join usersInTeam as uit on u.id=uit.userId where uit.teamId=? order by u.id;";
     db.query(sql, [req.query.teamId], (err, results) => {
         if (err) {
             console.error('Error fetching users:', err);

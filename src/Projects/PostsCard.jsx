@@ -3,6 +3,7 @@ import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../Context";
 import "./ViewPost.css"
+import PostAvatar from "./PostAvatar";
 import {
   makeStyles,
   Body1Strong,
@@ -70,7 +71,7 @@ export default function PostCard(props) {
               </div>
             </>}
             description={<><div className="postCreatedBy">
-              <Avatar name={props.post.createdBy} size={20} />
+              <PostAvatar username={props.post.createdBy}></PostAvatar>
               <Body1Strong className="postCreatedByName">{props.post.createdBy}</Body1Strong>
             </div></>}
           />
